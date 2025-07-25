@@ -1,0 +1,15 @@
+{
+  "name": "sujith_pwm",
+  "author": "Sujith Kani",
+  "bus": "custom",
+  "inputs": [
+    "clk",
+    "rst",
+    "wen",
+    "wdata[7:0]",
+    "addr[3:0]"
+  ],
+  "outputs": [
+    "pwm_out"
+  ]
+}
