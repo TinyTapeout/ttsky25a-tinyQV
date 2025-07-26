@@ -1,8 +1,8 @@
 # Tiny Tapeout project information
 project:
   title:        "TinyQV SoC with additional peripherals"      # Project title
-  author:       "Michael Bell"      # Your name
-  discord:      "rebelmike"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
+  author:       "Sujith Kani"      # Your name
+  discord:      "sujithkania"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "A Risc-V SoC with Tiny Tapeout contributed peripherals"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
   clock_hz:     64000000       # Clock frequency in Hz (or 0 if not applicable)
@@ -29,6 +29,7 @@ project:
     - "user_peripherals/encoder/encoder.v"
     - "user_peripherals/encoder/matt_encoder.v"
     - "user_peripherals/encoder/strobe_gen.v"
+    - "user_peripherals/pwm/pwm_sk.v"
     - "tinyQV/cpu/tinyqv.v"
     - "tinyQV/cpu/alu.v"
     - "tinyQV/cpu/core.v"
