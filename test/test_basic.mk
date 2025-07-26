@@ -7,7 +7,9 @@ WAVES ?= 1
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
 PROJECT_SOURCES = project.v peri*.v tinyQV/cpu/*.v tinyQV/peri/uart/uart_tx.v user_peripherals/*/*.v user_peripherals/*.v
-export PYTHONPATH = user_peripherals/matt_encoder
+export PYTHONPATH := \
+	user_peripherals/matt_encoder:\
+	user_peripherals/impostor_ws2812b
 
 ifneq ($(GATES),yes)
 

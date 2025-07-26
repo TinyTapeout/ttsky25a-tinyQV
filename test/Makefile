@@ -10,7 +10,7 @@ peri-%.xml:
 	MODULE=user_peripherals.$* make -f test_basic.mk
 	mv results.xml $@
 
-all: clean basic-results.xml peri-byte_example.xml peri-edge_counter.xml peri-full_example.xml prog-results.xml peri-matt_encoder.test.xml peri-ledstrip.test.xml
+all: clean basic-results.xml peri-byte_example.xml peri-edge_counter.xml peri-full_example.xml prog-results.xml peri-matt_encoder.test.xml peri-ledstrip.test.xml peri-impostor_ws2812b.test.xml
 	cat *results.xml peri-*.xml > results.xml
 
 clean:
