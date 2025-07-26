@@ -42,6 +42,7 @@ jobs:
           pdk: sky130
 
   viewer:
+    if: github.event_name != 'pull_request'
     needs: gds
     runs-on: ubuntu-24.04
     permissions:

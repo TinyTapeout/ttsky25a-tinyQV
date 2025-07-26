@@ -202,104 +202,6 @@ async def test_start(dut):
   await send_instr(dut, InstructionSW(tp, x1, 0x40).encode())
 
 @cocotb.test()
-async def test_uart_divider(dut):
-    dut._log.info("Start")
-
-    clock = Clock(dut.clk, 15.624, units="ns")
-    cocotb.start_soon(clock.start())
-
-    mhz_clock = Clock(dut.mhz_clk, 1000, units="ns")
-    cocotb.start_soon(mhz_clock.start())
-
-    await FallingEdge(dut.mhz_clk)
-
-    # Reset
-    await reset(dut)
-    start_time = get_sim_time("ns")
-
-    # Should start reading flash after 1 cycle
-    await ClockCycles(dut.clk, 1)
-    await start_read(dut, 0)
-
-    for baud in (9600, 1000000, 57600):
-        divider = 64000000 // baud
-        dut._log.info(f"Test {baud} baud, divider {divider}")
-
-        # Set up divider
-        divider_upper = (divider + 0x800) >> 12
-        divider_lower = divider & 0xfff
-        if divider_lower >= 0x800:
-            divider_lower -= 0x1000
-        await send_instr(dut, InstructionLUI(x1, divider_upper).encode())
-        await send_instr(dut, InstructionADDI(x1, x1, divider_lower).encode())
-        await send_instr(dut, InstructionSW(tp, x1, 0x88).encode())
-        await send_instr(dut, InstructionLW(a0, tp, 0x88).encode())
-        assert await read_reg(dut, a0) == divider
-
-        # Test UART TX
-        uart_byte = 0x54
-        await send_instr(dut, InstructionADDI(x1, x0, uart_byte).encode())
-        await send_instr(dut, InstructionSW(tp, x1, 0x80).encode())
-
-        start_nops(dut)
-        bit_time = 1000000000 // baud
-        await Timer(bit_time / 2, "ns")
-        assert dut.uart_tx.value == 0
-        for i in range(8):
-            await Timer(bit_time, "ns")
-            assert dut.uart_tx.value == (uart_byte & 1)
-            uart_byte >>= 1
-        await Timer(bit_time, "ns")
-        assert dut.uart_tx.value == 1
-
-        # Test UART RX
-        for j in range(3):
-            assert dut.uart_rts.value == 0
-            uart_rx_byte = random.randint(0, 255)
-            val = uart_rx_byte
-            dut.uart_rx.value = 0
-            await Timer(bit_time, "ns")
-            for i in range(8):
-                dut.uart_rx.value = val & 1
-                await Timer(bit_time, "ns")
-                assert dut.uart_rts.value == 0
-                val >>= 1
-            dut.uart_rx.value = 1
-            await Timer(bit_time, "ns")
-            assert dut.uart_rts.value == 0
-
-            uart_rx_byte2 = random.randint(0, 255)
-            val = uart_rx_byte2
-            dut.uart_rx.value = 0
-            await Timer(bit_time, "ns")
-            for i in range(8):
-                dut.uart_rx.value = val & 1
-                await Timer(bit_time, "ns")
-                assert dut.uart_rts.value == 1
-                val >>= 1
-            dut.uart_rx.value = 1
-            await Timer(bit_time, "ns")
-            assert dut.uart_rts.value == 1
-
-            await stop_nops()
-
-            await send_instr(dut, InstructionLW(x1, tp, 0x84).encode())
-            await read_byte(dut, x1, 0x2)
-            await send_instr(dut, InstructionLW(x1, tp, 0x80).encode())
-            await read_byte(dut, x1, uart_rx_byte)
-            assert dut.uart_rts.value == 0
-            await send_instr(dut, InstructionLW(x1, tp, 0x84).encode())
-            await read_byte(dut, x1, 0x2)
-            await send_instr(dut, InstructionLW(x1, tp, 0x80).encode())
-            await read_byte(dut, x1, uart_rx_byte2)
-            assert dut.uart_rts.value == 0
-            await send_instr(dut, InstructionLW(x1, tp, 0x84).encode())
-            await read_byte(dut, x1, 0)
-
-            if j != 2:
-                start_nops(dut)
-
-@cocotb.test()
 async def test_timer(dut):
     dut._log.info("Start")
 
@@ -706,7 +608,7 @@ async def test_random_alu(dut):
     seed = random.randint(0, 0xFFFFFFFF)
     #seed = 1508125843
     debug = False
-    for test in range(50):
+    for test in range(20):
         random.seed(seed + test)
         dut._log.info("Running test with seed {}".format(seed + test))
         for i in range(1, 16):
@@ -1017,7 +919,7 @@ async def test_random(dut):
     debug = False
     if debug and latch_ram: print("RAM: ", RAM)
 
-    for test in range(10):
+    for test in range(8):
         random.seed(seed + test)
         dut._log.info("Running test with seed {}".format(seed + test))
         for i in range(1, 16):

@@ -18,18 +18,20 @@ The encoder counts from 0 to 255.
 ## Register map
 
 | Address      | Name  | Access | Description                                                         |
-|--------------|-------|--------|---------------------------------------------------------------------|
-| 0x8000400    | DATA  | R      | Value of Encoder 0                                                  |
-| 0x8000401    | DATA  | R      | Value of Encoder 1                                                  |
-| 0x8000402    | DATA  | R      | Value of Encoder 2                                                  |
-| 0x8000403    | DATA  | R      | Value of Encoder 3                                                  |
-| 0x8000404    | DATA  | R/W    | Debounce frequency. Will be left shifted by 4                       |
+|--------------|-------|--------|----------------------------------------------------------------------------------|
+| 0x8000400    | ENC0  | R      | Value of Encoder 0                                                               |
+| 0x8000401    | ENC1  | R      | Value of Encoder 1                                                               |
+| 0x8000402    | ENC2  | R      | Value of Encoder 2                                                               |
+| 0x8000403    | ENC3  | R      | Value of Encoder 3                                                               |
+| 0x8000404    | DPER  | R/W    | Debounce period. Value is left shifted by 6. Default 128 (8192) clock cycles |
 
 ## How to test
 
 Connect up to 4 incremental encoders to the input port (see pin mapping).
 
 Use the test firmware to read the value of the encoder and print it out.
+
+Default debounce period should be fine at 64MHz, but might need tuning if you have noisy encoders or run at a different frequency.
 
 ## External hardware
 

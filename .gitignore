@@ -7,6 +7,7 @@ src/user_config.json
 src/config_merged.json
 test/sim_build
 test/user_peripherals/__pycache__/
+test/user_peripherals/*/__pycache__/
 test/__pycache__/
 test/*results.xml
 test/peri-*.xml

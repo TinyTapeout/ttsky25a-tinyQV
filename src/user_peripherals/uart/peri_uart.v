@@ -44,14 +44,27 @@ module tqvp_uart_wrapper #(parameter
         end
     end
 
+    // A read/write 1-bit register to choose alternative ui_in for rxd
+    reg rxd_select;
+    always @(posedge clk) begin
+        if (!rst_n) begin
+            rxd_select <= 0;
+        end else begin
+            if (address == 6'hc) begin
+                if (data_write_n != 2'b11) rxd_select <= data_in[0];
+            end
+        end
+    end
+
     //////  TX functionality //////
 
     wire uart_tx_busy;
+    wire uart_txd;
 
     tqvp_uart_tx i_uart_tx(
         .clk(clk),
         .resetn(rst_n),
-        .uart_txd(uo_out[0]),
+        .uart_txd(uart_txd),
         .uart_tx_en((address == 6'h0 && data_write_n != 2'b11)),
         .uart_tx_data(data_in[7:0]),
         .uart_tx_busy(uart_tx_busy),
@@ -65,12 +78,14 @@ module tqvp_uart_wrapper #(parameter
 
     wire uart_rx_valid;
     wire [7:0] uart_rx_data;
+    wire uart_rxd = rxd_select ? ui_in[3] : ui_in[7];
+    wire uart_rts;
 
     tqvp_uart_rx i_uart_rx(
         .clk(clk),
         .resetn(rst_n),
-        .uart_rxd(ui_in[7]),
-        .uart_rts(uo_out[1]),
+        .uart_rxd(uart_rxd),
+        .uart_rts(uart_rts),
         .uart_rx_read(!uart_rx_buffered),
         .uart_rx_valid(uart_rx_valid),
         .uart_rx_data(uart_rx_data),
@@ -100,10 +115,11 @@ module tqvp_uart_wrapper #(parameter
     assign user_interrupt[0] = uart_rx_buffered;
     assign data_out = address == 6'h0 ? {24'd0, uart_rx_buf_data} :
                       address == 6'h4 ? {30'd0, uart_rx_buffered, uart_tx_busy} :
-                      address == 6'h8 ? {19'd0, baud_divider} : 32'd0;
+                      address == 6'h8 ? {19'd0, baud_divider} : 
+                      address == 6'hc ? {31'd0, rxd_select} : 32'd0;
     assign data_ready = 1;
 
-    assign uo_out[7:2] = 0;
+    assign uo_out = {4{uart_rts, uart_txd}};
 
     wire _unused = &{data_in[31:8], ui_in[6:0], 1'b0};
 

@@ -1,0 +1,15 @@
+{signal: [
+  {name: 'clk', wave:          'P............'},
+  {name: 'data_write_n', wave: '=.==......==.', data: ['11', '00', '11', '00', '11']},
+  {name: 'address', wave:      'x.=.......=..', data: ['A1', 'A2']},
+  {name: 'data_in', wave:      'x.=x......=x.', data: ['D1', 'D2']},
+  {},
+  {name: 'clk', wave:          'P............'},
+  {name: 'data_write_n', wave: '=.==.........', data: ['11', '00', '11', '00', '11']},
+  {name: 'address', wave:      'x.=.......x..', data: ['A1', 'A2']},
+  {name: 'data_in', wave:      'x.=x.........', data: ['D1', 'D2']},
+],
+  head:{
+  text:'TinyQV Write to Peripheral',
+  tick:-3
+  }}

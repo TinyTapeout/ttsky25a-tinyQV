@@ -52,21 +52,25 @@ See also [debug docs](debug.md)
 | MTIME    | 0x8000034 (RW) | Get/set the 1MHz time count |
 | MTIMECMP | 0x8000038 (RW) | Get/set the time to trigger the timer interrupt |
 
+This is a simple timer which follows the spirit of the Risc-V timer but using a 32-bit counter instead of 64 to save area.
+In this version the MTIME register is updated at 1/64th of the clock frequency (nominally 1MHz), and MTIMECMP is used to trigger an interrupt.
+If MTIME is after MTIMECMP (by less than 2^30 microseconds to deal with wrap), the timer interrupt is asserted.
+
 ### GPIO
 
 | Register | Address | Description |
 | -------- | ------- | ----------- |
 | OUT | 0x8000040 (RW) | Control for out0-7 if the GPIO peripheral is selected |
 | IN  | 0x8000044 (R) | Reads the current state of in0-7 |
-| FUNC_SEL | 0x8000060 - 0x800007F | Function select for out0-7 |
+| FUNC_SEL | 0x8000060 - 0x800007F (RW) | Function select for out0-7 |
 
 | Function Select | Peripheral |
 | --------------- | ---------- |
 | 0               | Disabled   |
 | 1               | GPIO       |
-| 2               | UART TX    |
-| 3               | UART RX    |
-| 4 - 15          | User peripheral 2-13 |
+| 2               | UART       |
+| 3               | Disabled   |
+| 4 - 15          | User peripheral 4-15 |
 | 16 - 31         | User byte peripheral 0-15 |
 
 ### UART
@@ -77,6 +81,7 @@ See also [debug docs](debug.md)
 | RX_DATA | 0x8000080 (R) | Reads any received byte |
 | TX_BUSY | 0x8000084 (R) | Bit 0 indicates whether the UART TX is busy, bytes should not be written to the data register while this bit is set. Bit 1 indicates whether a received byte is available to be read. |
 | DIVIDER | 0x8000088 (R/W) | 13 bit clock divider to set the UART baud rate |
+| RX_SELECT | 0x800008C (R/W) | 1 bit select UART RX pin: `ui_in[7]` when low (default), `ui_in[3]` when high |
 
 # How to test
 
@@ -95,9 +100,9 @@ Reset the design as follows:
 
 Based on the observed latencies from tt06 testing, at the target 64MHz clock a read latency of 2 is required.  The maximum supported latency is currently 3.
 
-The above should all be handled by some MicroPython scripts for the RP2040 on the TT demo PC.
+The above should all be handled by some MicroPython scripts for the RP2040 on the TT demo PCB.
 
-Build programs using the riscv32-unknown-elf toolchain and the [tinyQV-sdk](https://github.com/MichaelBell/tinyQV-sdk), some examples are [here](https://github.com/MichaelBell/tinyQV-projects).
+Build programs using the [customised toolchain](https://github.com/MichaelBell/riscv-gnu-toolchain) and the [tinyQV-sdk](https://github.com/MichaelBell/tinyQV-sdk), some examples are [here](https://github.com/MichaelBell/tinyQV-projects).
 
 # External hardware
 

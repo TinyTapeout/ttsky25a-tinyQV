@@ -1,0 +1,17 @@
+{signal: [
+  {name: 'clk', wave:          'P.......'},
+  {name: 'data_read_n', wave:  '=.==....', data: ['11', '00', '11', '00', '11']},
+  {name: 'address', wave:      'x.=.....', data: ['A1', 'A2']},
+  {name: 'data_out', wave:     'x.=x....', data: ['D1', 'D2'], phase:-0.2},
+  {name: 'data_ready', wave:   '1.......'},
+  {},
+  {name: 'clk', wave:          'P.......'},
+  {name: 'data_read_n', wave:  '=.=...=.', data: ['11', '00', '11', '00', '11']},
+  {name: 'address', wave:      'x.=.....', data: ['A1', 'A2']},
+  {name: 'data_out', wave:     'x....=x.', data: ['D1', 'D2']},
+  {name: 'data_ready', wave:   'x.0..1x.'},
+],
+  head:{
+  text:'TinyQV Read from Peripheral',
+  tick:-3
+  }}

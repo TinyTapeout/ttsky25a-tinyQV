@@ -228,29 +228,195 @@ module tinyQV_peripherals (
         .user_interrupt(user_interrupts[5])
     );
 
-    // Unallocated peripherals, move up to explicit entry above to add a design.
-    generate
-        for (i = 6; i < 16; i = i + 1) begin
-            tqvp_full_example i_user_peri (
-                .clk(clk),
-                .rst_n(rst_n),
+    tqvp_full_example i_user_peri06 (
+        .clk(clk),
+        .rst_n(rst_n),
 
-                .ui_in(ui_in),
-                .uo_out(uo_out_from_user_peri[i]),
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[6]),
 
-                .address(addr_in[5:0]),
-                .data_in(data_in),
+        .address(addr_in[5:0]),
+        .data_in(data_in),
 
-                .data_write_n(data_write_n    | {2{~peri_user[i]}}),
-                .data_read_n(data_read_n_peri | {2{~peri_user[i]}}),
+        .data_write_n(data_write_n    | {2{~peri_user[6]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[6]}}),
 
-                .data_out(data_from_user_peri[i]),
-                .data_ready(data_ready_from_user_peri[i]),
+        .data_out(data_from_user_peri[6]),
+        .data_ready(data_ready_from_user_peri[6]),
 
-                .user_interrupt(user_interrupts[i])
-            );
-        end
-    endgenerate
+        .user_interrupt(user_interrupts[6])
+    );
+
+    tqvp_full_example i_user_peri07 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[7]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[7]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[7]}}),
+
+        .data_out(data_from_user_peri[7]),
+        .data_ready(data_ready_from_user_peri[7]),
+
+        .user_interrupt(user_interrupts[7])
+    );
+
+    tqvp_full_example i_user_peri08 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[8]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[8]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[8]}}),
+
+        .data_out(data_from_user_peri[8]),
+        .data_ready(data_ready_from_user_peri[8]),
+
+        .user_interrupt(user_interrupts[8])
+    );
+
+    tqvp_full_example i_user_peri09 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[9]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[9]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[9]}}),
+
+        .data_out(data_from_user_peri[9]),
+        .data_ready(data_ready_from_user_peri[9]),
+
+        .user_interrupt(user_interrupts[9])
+    );
+
+    tqvp_full_example i_user_peri10 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[10]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[10]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[10]}}),
+
+        .data_out(data_from_user_peri[10]),
+        .data_ready(data_ready_from_user_peri[10]),
+
+        .user_interrupt(user_interrupts[10])
+    );
+
+    tqvp_full_example i_user_peri11 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[11]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[11]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[11]}}),
+
+        .data_out(data_from_user_peri[11]),
+        .data_ready(data_ready_from_user_peri[11]),
+
+        .user_interrupt(user_interrupts[11])
+    );
+
+    tqvp_full_example i_user_peri12 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[12]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[12]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[12]}}),
+
+        .data_out(data_from_user_peri[12]),
+        .data_ready(data_ready_from_user_peri[12]),
+
+        .user_interrupt(user_interrupts[12])
+    );
+
+    tqvp_full_example i_user_peri13 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[13]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[13]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[13]}}),
+
+        .data_out(data_from_user_peri[13]),
+        .data_ready(data_ready_from_user_peri[13]),
+
+        .user_interrupt(user_interrupts[13])
+    );
+
+    tqvp_full_example i_user_peri14 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[14]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[14]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[14]}}),
+
+        .data_out(data_from_user_peri[14]),
+        .data_ready(data_ready_from_user_peri[14]),
+
+        .user_interrupt(user_interrupts[14])
+    );
+
+    tqvp_full_example i_user_peri15 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[15]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[15]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[15]}}),
+
+        .data_out(data_from_user_peri[15]),
+        .data_ready(data_ready_from_user_peri[15]),
+
+        .user_interrupt(user_interrupts[15])
+    );
 
     // --------------------------------------------------------------------- //
     // Byte interface peripherals
@@ -300,24 +466,199 @@ module tinyQV_peripherals (
         .data_out(data_from_simple_peri[2])
     );
 
-    // Unallocated peripherals, move up to explicit entry above to add a design.
-    generate
-        for (i = 3; i < 16; i = i + 1) begin
-            tqvp_byte_example i_user_simple (
-                .clk(clk),
-                .rst_n(rst_n),
+    tqvp_byte_example i_user_simple03 (
+        .clk(clk),
+        .rst_n(rst_n),
 
-                .ui_in(ui_in),
-                .uo_out(uo_out_from_simple_peri[i]),
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[3]),
 
-                .address(addr_in[3:0]),
+        .address(addr_in[3:0]),
 
-                .data_write((data_write_n != 2'b11) & peri_simple[i]),
-                .data_in(data_in[7:0]),
+        .data_write((data_write_n != 2'b11) & peri_simple[3]),
+        .data_in(data_in[7:0]),
 
-                .data_out(data_from_simple_peri[i])
-            );
-        end
-    endgenerate
+        .data_out(data_from_simple_peri[3])
+    );
+
+    tqvp_byte_example i_user_simple04 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[4]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[4]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[4])
+    );
+
+    tqvp_byte_example i_user_simple05 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[5]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[5]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[5])
+    );
+
+    tqvp_byte_example i_user_simple06 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[6]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[6]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[6])
+    );
+
+    tqvp_byte_example i_user_simple07 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[7]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[7]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[7])
+    );
+
+    tqvp_byte_example i_user_simple08 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[8]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[8]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[8])
+    );
+
+    tqvp_byte_example i_user_simple09 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[9]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[9]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[9])
+    );
+
+    tqvp_byte_example i_user_simple010 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[10]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[10]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[10])
+    );
+
+    tqvp_byte_example i_user_simple011 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[11]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[11]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[11])
+    );
+
+    tqvp_byte_example i_user_simple012 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[12]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[12]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[12])
+    );
+
+    tqvp_byte_example i_user_simple013 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[13]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[13]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[13])
+    );
+
+    tqvp_byte_example i_user_simple014 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[14]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[14]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[14])
+    );
+
+    tqvp_byte_example i_user_simple015 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_simple_peri[15]),
+
+        .address(addr_in[3:0]),
+
+        .data_write((data_write_n != 2'b11) & peri_simple[15]),
+        .data_in(data_in[7:0]),
+
+        .data_out(data_from_simple_peri[15])
+    );
 
 endmodule

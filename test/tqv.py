@@ -20,8 +20,8 @@ class TinyQV:
 
     # Reset the design, this reset will initialize TinyQV and connect
     # all inputs and outputs to your peripheral.
-    async def reset(self):
-        await test_util.reset(self.dut, 1, 0)
+    async def reset(self, initial_ui_in=0):
+        await test_util.reset(self.dut, 1, initial_ui_in)
 
         # Should start reading flash after 1 cycle
         await ClockCycles(self.dut.clk, 1)
@@ -75,8 +75,14 @@ class TinyQV:
     # If sync is false this function will return before the store is completed.
     async def write_hword_reg(self, reg, value, sync=True):
         await test_util.stop_nops()
-        await test_util.send_instr(self.dut, InstructionLUI(a1, value >> 12).encode())
-        await test_util.send_instr(self.dut, InstructionADDI(a1, a1, value & 0xfff).encode())
+        # Prepare value for LUI + ADDI
+        value_upper = (value + 0x800) >> 12
+        value_lower = value & 0xfff
+        if value_lower >= 0x800:
+            value_lower -= 0x1000
+
+        await test_util.send_instr(self.dut, InstructionLUI(a1, value_upper).encode())
+        await test_util.send_instr(self.dut, InstructionADDI(a1, a1, value_lower).encode())
         await test_util.send_instr(self.dut, InstructionSH(tp, a1, self.base_address + reg).encode())
 
         if sync:
@@ -101,8 +107,15 @@ class TinyQV:
     # If sync is false this function will return before the store is completed.
     async def write_word_reg(self, reg, value, sync=True):
         await test_util.stop_nops()
-        await test_util.send_instr(self.dut, InstructionLUI(a1, value >> 12).encode())
-        await test_util.send_instr(self.dut, InstructionADDI(a1, a1, value & 0xfff).encode())
+
+        # Prepare value for LUI + ADDI
+        value_upper = (value + 0x800) >> 12
+        value_lower = value & 0xfff
+        if value_lower >= 0x800:
+            value_lower -= 0x1000
+
+        await test_util.send_instr(self.dut, InstructionLUI(a1, value_upper).encode())
+        await test_util.send_instr(self.dut, InstructionADDI(a1, a1, value_lower).encode())
         await test_util.send_instr(self.dut, InstructionSW(tp, a1, self.base_address + reg).encode())
 
         if sync:
