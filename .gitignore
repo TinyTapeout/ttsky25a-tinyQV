@@ -20,3 +20,6 @@ test/gate_level_netlist.v
 *.uf2
 gds_render_preview*
 tt/
+tinyqv.json
+!fpga/pico-ice/micropython/hello.bin
+!fpga/pico-ice/micropython/tqv-micropython.bin
