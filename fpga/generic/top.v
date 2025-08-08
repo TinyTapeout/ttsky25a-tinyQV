@@ -1,20 +1,19 @@
 /*
- * Copyright (c) 2024 Michael Bell
+ * Copyright (c) 2024-2025 Michael Bell
  * SPDX-License-Identifier: Apache-2.0
  */
 
 `default_nettype none
 
-module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
-    input  wire [7:0] ui_in,    // Dedicated inputs
-    output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path - only some bits used
-    output wire [7:0] uio_out,  // IOs: Output path
-    output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
-    input  wire       ena,
-    input  wire       clk,
-    input  wire       rst_n
+module tinyQV_top (
+        input clk,
+        input rst_n,
+
+        input [7:0] ui_in,
+        output [7:0] uo_out
+
 );
+    localparam CLOCK_MHZ = 14;
 
     // Address to peripheral map
     localparam PERI_NONE = 4'h0;
@@ -32,16 +31,23 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
     always @(negedge clk) rst_reg_n <= rst_n;
 
     // Bidirs are used for SPI interface
-    wire [3:0] qspi_data_in = {uio_in[5:4], uio_in[2:1]};
+    wire [3:0] qspi_data_in;
     wire [3:0] qspi_data_out;
     wire [3:0] qspi_data_oe;
     wire       qspi_clk_out;
     wire       qspi_flash_select;
     wire       qspi_ram_a_select;
     wire       qspi_ram_b_select;
-    assign uio_out = {qspi_ram_b_select, qspi_ram_a_select, qspi_data_out[3:2], 
-                      qspi_clk_out, qspi_data_out[1:0], qspi_flash_select};
-    assign uio_oe = rst_n ? {2'b11, qspi_data_oe[3:2], 1'b1, qspi_data_oe[1:0], 1'b1} : 8'h00;
+
+    sim_qspi_pmod i_qspi (
+        .qspi_data_in(qspi_data_out & qspi_data_oe),
+        .qspi_data_out(qspi_data_in),
+        .qspi_clk(qspi_clk_out),
+
+        .qspi_flash_select(qspi_flash_select),
+        .qspi_ram_a_select(qspi_ram_a_select),
+        .qspi_ram_b_select(qspi_ram_b_select)
+    );
 
     wire [27:0] addr;
     wire  [1:0] write_n;
@@ -118,7 +124,7 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
         .interrupt_req(interrupt_req),
         .time_pulse(time_pulse),
 
-        .spi_data_in(qspi_data_in),
+        .spi_data_in(rst_reg_n ? qspi_data_in : 4'b0010),
         .spi_data_out(qspi_data_out),
         .spi_data_oe(qspi_data_oe),
         .spi_clk_out(qspi_clk_out),
@@ -204,7 +210,7 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
         end
     end
 
-    uart_tx #(.CLK_HZ(CLOCK_MHZ * 1_000_000), .BIT_RATE(4_000_000)) i_debug_uart_tx(
+    uart_tx #(.CLK_HZ(CLOCK_MHZ*1_000_000), .BIT_RATE(1_000_000)) i_debug_uart_tx(
         .clk(clk),
         .resetn(rst_reg_n),
         .uart_txd(debug_uart_txd),
@@ -213,7 +219,7 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
         .uart_tx_busy(debug_uart_tx_busy) 
     );
 
-    reg [5:0] time_count;
+    reg [7:0] time_count;
     always @(posedge clk) begin
         if (!rst_reg_n) begin
             time_count <= 0;
@@ -236,6 +242,7 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
         debug_rd_r <= debug_rd;
     end
 
+/*
     reg [15:0] debug_signals;
     always @(*) begin
         debug_signals  = {debug_instr_complete,
@@ -256,8 +263,7 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
                           debug_stop_txn};
     end
     assign debug_signal = debug_signals[ui_in[6:3]];
-
-    // List all unused inputs to prevent warnings
-    wire _unused = &{ena, uio_in[7:6], uio_in[3], uio_in[0], read_complete, 1'b0};
+*/
+    assign debug_signal = 1'b0;
 
 endmodule

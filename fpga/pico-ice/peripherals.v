@@ -14,7 +14,7 @@
 // 0x800_00c0 - 0ff: UART RX
 // 0x800_0100 - 3ff: 12 user peripherals (64 bytes each, word and halfword access supported, each has an interrupt)
 // 0x800_0400 - 4ff: 16 simple peripherals (16 bytes each, byte access only)
-module tinyQV_peripherals (
+module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
     input         clk,
     input         rst_n,
 
@@ -163,7 +163,7 @@ module tinyQV_peripherals (
     // --------------------------------------------------------------------- //
     // UART
 
-    tqvp_uart_wrapper i_uart (
+    tqvp_uart_wrapper #(.CLOCK_MHZ(CLOCK_MHZ)) i_uart (
         .clk(clk),
         .rst_n(rst_n),
 

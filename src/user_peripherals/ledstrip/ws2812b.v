@@ -1,4 +1,4 @@
-module ws2812b (
+module ws2812b #(parameter CLOCK_MHZ=64) (
     input wire clk,               // 64 MHz input clock
     input wire reset,
     input wire [23:0] data_in,    // color data
@@ -17,7 +17,7 @@ module ws2812b (
   localparam RES_DELAY = 325e-6; // reset duration (325us)
 
   // Calculate clock cycles needed based on input clock frequency
-  parameter CLOCK_FREQ = 64e6; // 64 MHz
+  parameter CLOCK_FREQ = CLOCK_MHZ * 1e6; // 64 MHz
 
   // Calculate clock cycles for each timing parameter
   localparam [15:0] CYCLES_PERIOD = $floor(CLOCK_FREQ * PERIOD);

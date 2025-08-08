@@ -8,7 +8,7 @@
 // Change the name of this module to something that reflects its functionality and includes your name for uniqueness
 // For example tqvp_yourname_spi for an SPI peripheral.
 // Then edit tt_wrapper.v line 38 and change tqvp_example to your chosen module name.
-module tqvp_cattuto_ws2812b_driver (
+module tqvp_cattuto_ws2812b_driver #(parameter CLOCK_MHZ=64) (
     input         clk,          // Clock - the TinyQV project clock is normally set to 64MHz.
     input         rst_n,        // Reset_n - low to reset.
 
@@ -124,7 +124,7 @@ module tqvp_cattuto_ws2812b_driver (
     wire ledstrip_ready;
     wire ledstrip;
 
-    ws2812b ws2812b_inst (
+    ws2812b #(.CLOCK_MHZ(CLOCK_MHZ)) ws2812b_inst (
         .clk(clk),
         .reset(ledstrip_reset),
         .data_in(ledstrip_data),

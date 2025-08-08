@@ -6,8 +6,9 @@
 `default_nettype none
 
 // UART peripheral - this wraps both TX and RX UART
-module tqvp_uart_wrapper #(parameter 
-    DIVIDER_REG_LEN = 13        // Enough to allow baud rates down to 9600 at 64MHz clock
+module tqvp_uart_wrapper #(
+    parameter DIVIDER_REG_LEN = 13,        // Enough to allow baud rates down to 9600 at 64MHz clock
+    parameter CLOCK_MHZ = 64
     )(
     input         clk,          // Clock - the TinyQV project clock is normally set to 64MHz.
     input         rst_n,        // Reset_n - low to reset.
@@ -35,7 +36,7 @@ module tqvp_uart_wrapper #(parameter
     reg [DIVIDER_REG_LEN-1:0] baud_divider;
     always @(posedge clk) begin
         if (!rst_n) begin
-            baud_divider <= 555;  // Reset to correct divider for 115200 baud at 64MHz.
+            baud_divider <= (CLOCK_MHZ * 1000000) / 115200;  // Reset to correct divider for 115200 baud.
         end else begin
             if (address == 6'h8) begin
                 if (data_write_n != 2'b11)              baud_divider[7:0]   <= data_in[7:0];

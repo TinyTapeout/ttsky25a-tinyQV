@@ -23,3 +23,8 @@ tt/
 tinyqv.json
 !fpga/pico-ice/micropython/hello.bin
 !fpga/pico-ice/micropython/tqv-micropython.bin
+fpga/generic/test/sim_build
+fpga/generic/test/user_peripherals/__pycache__/
+fpga/generic/test/user_peripherals/*/__pycache__/
+fpga/generic/test/__pycache__/
+fpga/generic/test/*results.xml

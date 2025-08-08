@@ -19,7 +19,7 @@ module tinyQV_top (
         output [7:0] uo_out
 
 );
-    localparam CLOCK_FREQ = 14_000_000;
+    localparam CLOCK_MHZ = 14;
 
     // Address to peripheral map
     localparam PERI_NONE = 4'h0;
@@ -177,7 +177,7 @@ module tinyQV_top (
     assign uo_out[6] = gpio_out_sel[6] ? peri_out[6] : debug_uart_txd;
     assign uo_out[7] = gpio_out_sel[7] ? peri_out[7] : debug_signal;
 
-    tinyQV_peripherals i_peripherals (
+    tinyQV_peripherals #(.CLOCK_MHZ(CLOCK_MHZ)) i_peripherals (
         .clk(clk),
         .rst_n(rst_reg_n),
 
@@ -229,7 +229,7 @@ module tinyQV_top (
         end
     end
 
-    uart_tx #(.CLK_HZ(64_000_000), .BIT_RATE(4_000_000)) i_debug_uart_tx(
+    uart_tx #(.CLK_HZ(CLOCK_MHZ*1_000_000), .BIT_RATE(1_000_000)) i_debug_uart_tx(
         .clk(clk),
         .resetn(rst_reg_n),
         .uart_txd(debug_uart_txd),
@@ -243,11 +243,11 @@ module tinyQV_top (
         if (!rst_reg_n) begin
             time_count <= 0;
         end else begin
-            if (time_count == 6'd13) time_count <= 0;
+            if (time_count == (CLOCK_MHZ - 1)) time_count <= 0;
             else time_count <= time_count + 1;
         end
     end
-    assign time_pulse = time_count == 6'd13;
+    assign time_pulse = time_count == (CLOCK_MHZ - 1);
 
     // Debug
     always @(posedge clk) begin
