@@ -60,6 +60,8 @@ project:
     - "user_peripherals/pwl_synth/pwl_synth.sv"
     - "user_peripherals/pwl_synth/pwl_synth_memory.sv"
     - "user_peripherals/wdt/tqvp_nkanderson_wdt.sv"
+    - "user_peripherals/RV2A03/apu.v"
+    - "user_peripherals/RV2A03/peripheral.v"
     - "user_peripherals/tqvp_laurie_dwarf_line_table_accelerator.sv"
     - "user_peripherals/pulse_transmitter/peripheral.v"
     - "user_peripherals/pulse_transmitter/carrier.v"
