@@ -83,6 +83,11 @@ project:
     - "tinyQV/cpu/latch_reg.v"
     - "tinyQV/cpu/time.v"
     - "tinyQV/peri/uart/uart_tx.v"
+    - "user_peripherals/trng/dual_trng.v"
+    - "user_peripherals/trng/entropy_cell.v"
+    - "user_peripherals/trng/rg_base_long.v"
+    - "user_peripherals/trng/rg_base_short.v"
+    - "user_peripherals/trng/peripheral.v"
 
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
