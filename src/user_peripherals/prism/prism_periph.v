@@ -580,7 +580,7 @@ module tqvp_prism (
                 ctrl_reg <= ctrl_bits_in;
 
             if (count1_reg_en & prism_wr)
-                count_preloads{23:0] <= data_in;
+                count_preloads[23:0] <= data_in;
             if ((count2_reg_en | count1_toggle_en) & prism_wr)
                 count_preloads[31:24] <= data_in;
         end
