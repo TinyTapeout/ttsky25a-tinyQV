@@ -78,6 +78,8 @@ project:
     - "user_peripherals/ubcd/kaktovik.v"
     - "user_peripherals/ubcd/peripheral.v"
     - "user_peripherals/ubcd/ubcd.v"
+    - "user_peripherals/analog_toolkit/fp_counter.v"
+    - "user_peripherals/analog_toolkit/peripheral.v"
     - "tinyQV/cpu/tinyqv.v"
     - "tinyQV/cpu/alu.v"
     - "tinyQV/cpu/core.v"

@@ -571,7 +571,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .data_out(data_from_simple_peri[9])
     );
 
-    tqvp_byte_example i_user_simple010 (
+    tqvp_htfab_anatool analog_toolkit (
         .clk(clk),
         .rst_n(rst_n),
 
