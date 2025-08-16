@@ -14,6 +14,7 @@ USER_PERIPHERALS = \
 	prism.test \
 	pwl_synth.test \
 	wdt.test \
+	RV2A03.test \
 	tqvp_laurie_dwarf_line_table_accelerator.test \
 	pulse_transmitter.test \
 	prng.test \
