@@ -73,6 +73,8 @@ project:
     - "user_peripherals/hardware_utf8/hardware_utf8.v"
     - "user_peripherals/waveforms/font.sv"
     - "user_peripherals/waveforms/peripheral.sv"
+    - "user_peripherals/pdm/cic3_pdm.v"
+    - "user_peripherals/pdm/peripheral.v"
     - "user_peripherals/ubcd/ascii.v"
     - "user_peripherals/ubcd/cistercian.v"
     - "user_peripherals/ubcd/kaktovik.v"
