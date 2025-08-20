@@ -15,6 +15,8 @@ class TinyQV:
         self.peripheral_num = peripheral_num
         if peripheral_num < 16:
             self.base_address = peripheral_num * 0x40
+        elif peripheral_num >= 32:
+            self.base_address = peripheral_num * 0x40 - 0x200
         else:
             self.base_address = 0x300 + peripheral_num * 0x10
 

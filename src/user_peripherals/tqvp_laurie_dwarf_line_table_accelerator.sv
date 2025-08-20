@@ -20,10 +20,7 @@ module tqvp_laurie_dwarf_line_table_accelerator(
     input  [1:0]  data_write_n,
     input  [1:0]  data_read_n,
     output [31:0] data_out,
-    output        data_ready,
-
-    // Interrupt request to TinyQV core, unused.
-    output        user_interrupt
+    output        data_ready
 );
 
     // REGISTER READ/WRITE CONTROL VALUES
@@ -1168,7 +1165,6 @@ module tqvp_laurie_dwarf_line_table_accelerator(
     // Pmod and interrupt interfaces are unused. Drive the outputs to 0 and mark the Pmod inputs as
     // unused to avoid warnings.
 
-    assign user_interrupt = 0;
     assign uo_out[7:0]    = 8'h0;
 
     wire _unused  = &{ ui_in };

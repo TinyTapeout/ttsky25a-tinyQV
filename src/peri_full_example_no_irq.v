@@ -1,14 +1,12 @@
 /*
- * Copyright (c) 2025 Your Name
+ * Copyright (c) 2025 Michael Bell
  * SPDX-License-Identifier: Apache-2.0
  */
 
 `default_nettype none
 
-// Change the name of this module to something that reflects its functionality and includes your name for uniqueness
-// For example tqvp_yourname_spi for an SPI peripheral.
-// Then edit tt_wrapper.v line 41 and change tqvp_example to your chosen module name.
-module tqvp_cattuto_xoshiro128plusplus_prng (
+// Template for a full TinyQV peripheral (no interrupt)
+module tqvp_full_example_no_irq (
     input         clk,          // Clock - the TinyQV project clock is normally set to 64MHz.
     input         rst_n,        // Reset_n - low to reset.
 
@@ -29,52 +27,36 @@ module tqvp_cattuto_xoshiro128plusplus_prng (
     output        data_ready
 );
 
-    xoshiro128plusplus xoshiro128plusplus_inst (
-        .clk(clk),
-        .rst_n(rst_n),
-        .rnd(rnd),
-        .next(rnd_next),
-        .write(seed_write),
-        .write_addr(seed_addr),
-        .write_data(seed_data)
-    );
-
-    wire [31:0] rnd;
-    reg rnd_next;
-
-    wire [1:0] seed_addr;
-    assign seed_addr = address[1:0] - 1;
-
-    wire [31:0] seed_data;
-    assign seed_data = data_in;
-
-    // driven high iff 0x01 <= address <= 0x04 and host is writing a 32-bit word
-    wire seed_write;
-    assign seed_write = ((address > 0) && (address <= 4) && (data_write_n == 2'b10)) ? 1 : 0;
-
+    // Implement a 32-bit read/write register at address 0
+    reg [31:0] example_data;
     always @(posedge clk) begin
         if (!rst_n) begin
-            rnd_next <= 1;
+            example_data <= 0;
         end else begin
-            // if reading a 32-bit word from register 0x00, trigger computation of next state
-            if ((address == 6'h0) && (data_read_n == 2'b10) && !rnd_next) begin
-                rnd_next <= 1;
-            end else begin
-                rnd_next <= 0;
+            if (address == 6'h0) begin
+                if (data_write_n != 2'b11)              example_data[7:0]   <= data_in[7:0];
+                if (data_write_n[1] != data_write_n[0]) example_data[15:8]  <= data_in[15:8];
+                if (data_write_n == 2'b10)              example_data[31:16] <= data_in[31:16];
             end
         end
     end
 
-    // Address 0 reads the current pseudorandom word.  
+    // The bottom 8 bits of the stored data are added to ui_in and output to uo_out.
+    assign uo_out = example_data[7:0] + ui_in;
+
+    // Address 0 reads the example data register.  
+    // Address 4 reads ui_in
     // All other addresses read 0.
-    assign data_out = (address == 6'h0) ? rnd : 32'h0;
+    assign data_out = (address == 6'h0) ? example_data :
+                      (address == 6'h4) ? {24'h0, ui_in} :
+                      32'h0;
 
     // All reads complete in 1 clock
     assign data_ready = 1;
     
-    assign uo_out = 0;
-
     // List all unused inputs to prevent warnings
-    wire _unused = &{ui_in, 1'b0};
+    // data_read_n is unused as none of our behaviour depends on whether
+    // registers are being read.
+    wire _unused = &{data_read_n, 1'b0};
 
 endmodule

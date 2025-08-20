@@ -6,7 +6,7 @@ import math
 import numpy as np
 from tqv import TinyQV
 
-PERIPHERAL_NUM = 4
+PERIPHERAL_NUM = 32
 
 def float_to_f16_hex(f):
     """Convert Python float to a 32-bit word with the lower 16 bits as IEEE-754 half-precision float."""

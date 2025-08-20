@@ -53,11 +53,11 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
     wire [1:0] data_read_n_peri;
     assign data_read_n_peri = data_read_n | {2{data_ready_r}};
 
-    wire [31:0] data_from_user_peri   [0:15];
+    wire [31:0] data_from_user_peri   [0:23];
     wire [7:0]  data_from_simple_peri [0:15];
-    wire        data_ready_from_user_peri   [0:15];
+    wire        data_ready_from_user_peri   [0:23];
 
-    wire [7:0]  uo_out_from_user_peri   [0:15];
+    wire [7:0]  uo_out_from_user_peri   [0:23];
     wire [7:0]  uo_out_from_simple_peri [0:15];
     reg [7:0] uo_out_comb;
     assign uo_out = uo_out_comb;
@@ -91,21 +91,25 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
     localparam PERI_GPIO = 1;
     localparam PERI_UART = 2;
 
-    reg [15:0] peri_user;
+    reg [23:0] peri_user;
     reg [15:0] peri_simple;
 
     always @(*) begin
         peri_user = 0;
         peri_simple = 0;
 
-        if (addr_in[10]) begin
+        if (addr_in[10:9] == 2'b10) begin
             peri_simple[addr_in[7:4]] = 1;
             data_from_peri = {24'h0, data_from_simple_peri[addr_in[7:4]]};
             data_ready_from_peri = 1;
+        end else if (addr_in[10] == 1'b1) begin
+            peri_user[{addr_in[10], 1'b0, addr_in[8:6]}] = 1;
+            data_from_peri = data_from_user_peri[{addr_in[10], 1'b0, addr_in[8:6]}];
+            data_ready_from_peri = data_ready_from_user_peri[{addr_in[10], 1'b0, addr_in[8:6]}];
         end else begin
-            peri_user[addr_in[9:6]] = 1;
-            data_from_peri = data_from_user_peri[addr_in[9:6]];
-            data_ready_from_peri = data_ready_from_user_peri[addr_in[9:6]];
+            peri_user[{1'b0, addr_in[9:6]}] = 1;
+            data_from_peri = data_from_user_peri[{1'b0, addr_in[9:6]}];
+            data_ready_from_peri = data_ready_from_user_peri[{1'b0, addr_in[9:6]}];
         end
     end
 
@@ -116,7 +120,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
     // --------------------------------------------------------------------- //
     // GPIO
 
-    reg [4:0] gpio_out_func_sel [0:7];
+    reg [5:0] gpio_out_func_sel [0:7];
     reg [7:0] gpio_out;
 
     always @(posedge clk) begin
@@ -131,7 +135,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
 
     assign data_from_user_peri[PERI_GPIO] = (addr_in[5:0] == 6'h0) ? {24'h0, gpio_out} :
                                             (addr_in[5:0] == 6'h4) ? {24'h0, ui_in}    :
-                                            ({addr_in[5], addr_in[1:0]} == 3'b100) ? {27'h0, gpio_out_func_sel[addr_in[4:2]]} :
+                                            ({addr_in[5], addr_in[1:0]} == 3'b100) ? {26'h0, gpio_out_func_sel[addr_in[4:2]][5:0] } :
                                             32'h0;
     assign data_ready_from_user_peri[PERI_GPIO] = 1;
     assign uo_out_from_user_peri[PERI_GPIO] = gpio_out;
@@ -144,7 +148,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
                     gpio_out_func_sel[i] <= (i == 0 || i == 1) ? PERI_UART : PERI_GPIO;
                 end else if (peri_user[PERI_GPIO]) begin
                     if ({addr_in[5], addr_in[1:0]} == 3'b100 && addr_in[4:2] == i) begin
-                        if (data_write_n != 2'b11) gpio_out_func_sel[i] <= data_in[4:0];
+                        if (data_write_n != 2'b11) gpio_out_func_sel[i] <= {data_in[5:0]};
                     end
                 end
             end
@@ -155,7 +159,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
                 if (gpio_out_func_sel[i][4]) begin
                     uo_out_comb[i] = uo_out_from_simple_peri[gpio_out_func_sel[i][3:0]][i];
                 end else begin
-                    uo_out_comb[i] = uo_out_from_user_peri[gpio_out_func_sel[i][3:0]][i];
+                    uo_out_comb[i] = uo_out_from_user_peri[{gpio_out_func_sel[i][5],gpio_out_func_sel[i][3:0]}][i];
                 end
             end
         end
@@ -204,7 +208,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
     // --------------------------------------------------------------------- //
     // Full interface peripherals
 
-    tqvp_dsatizabal_fpu i_user_peri04(
+    tqvp_full_empty i_user_peri04(
         .clk(clk),
         .rst_n(rst_n),
 
@@ -261,7 +265,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .user_interrupt(user_interrupts[6])
     );
 
-    tqvp_toivoh_pwl_synth i_user_peri07 (
+    tqvp_full_empty i_user_peri07 (
         .clk(clk),
         .rst_n(rst_n),
 
@@ -299,7 +303,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .user_interrupt(user_interrupts[8])
     );
 
-    tqvp_laurie_dwarf_line_table_accelerator i_dwarf_line_table_accelerator09 (
+    tqvp_full_empty i_user_peri09 (
         .clk(clk),
         .rst_n(rst_n),
 
@@ -356,7 +360,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .user_interrupt(user_interrupts[11])
     );
 
-    tqvp_cattuto_xoshiro128plusplus_prng i_cattuto_xoshiro128plusplus_prng (
+    tqvp_full_empty i_user_peri12 (
         .clk(clk),
         .rst_n(rst_n),
 
@@ -394,7 +398,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .user_interrupt(user_interrupts[13])
     );
 
-    tqvp_fjpolo_rv2a03 i_user_peri14 (
+    tqvp_full_empty i_user_peri14 (
         .clk(clk),
         .rst_n(rst_n),
 
@@ -673,6 +677,145 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .data_in(data_in[7:0]),
 
         .data_out(data_from_simple_peri[15])
+    );
+
+    // --------------------------------------------------------------------- //
+    // Additional full interface peripherals with no interrupt
+
+    tqvp_dsatizabal_fpu i_user_peri32 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[16]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[16]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[16]}}),
+
+        .data_out(data_from_user_peri[16]),
+        .data_ready(data_ready_from_user_peri[16])
+    );
+
+    tqvp_toivoh_pwl_synth i_user_peri33 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[17]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[17]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[17]}}),
+
+        .data_out(data_from_user_peri[17]),
+        .data_ready(data_ready_from_user_peri[17])
+    );
+
+    tqvp_laurie_dwarf_line_table_accelerator i_user_peri34 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[18]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[18]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[18]}}),
+
+        .data_out(data_from_user_peri[18]),
+        .data_ready(data_ready_from_user_peri[18])
+    );
+
+    tqvp_cattuto_xoshiro128plusplus_prng i_user_peri35 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[19]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[19]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[19]}}),
+
+        .data_out(data_from_user_peri[19]),
+        .data_ready(data_ready_from_user_peri[19])
+    );
+
+    tqvp_fjpolo_rv2a03 i_user_peri36 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[20]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[20]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[20]}}),
+
+        .data_out(data_from_user_peri[20]),
+        .data_ready(data_ready_from_user_peri[20])
+    );
+
+    tqvp_full_example_no_irq i_user_peri37 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[21]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[21]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[21]}}),
+
+        .data_out(data_from_user_peri[21]),
+        .data_ready(data_ready_from_user_peri[21])
+    );
+
+    tqvp_full_example_no_irq i_user_peri38 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[22]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[22]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[22]}}),
+
+        .data_out(data_from_user_peri[22]),
+        .data_ready(data_ready_from_user_peri[22])
+    );
+
+    tqvp_full_example_no_irq i_user_peri39 (
+        .clk(clk),
+        .rst_n(rst_n),
+
+        .ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[23]),
+
+        .address(addr_in[5:0]),
+        .data_in(data_in),
+
+        .data_write_n(data_write_n    | {2{~peri_user[23]}}),
+        .data_read_n(data_read_n_peri | {2{~peri_user[23]}}),
+
+        .data_out(data_from_user_peri[23]),
+        .data_ready(data_ready_from_user_peri[23])
     );
 
 endmodule

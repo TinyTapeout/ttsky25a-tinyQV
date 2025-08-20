@@ -107,7 +107,7 @@ async def common_setup(dut):
     dut._log.info("Start")
     clock = Clock(dut.clk, 100, units="ns")
     cocotb.start_soon(clock.start())
-    tqv = TinyQV(dut, peripheral_num=14)
+    tqv = TinyQV(dut, peripheral_num=36)
     await tqv.reset()
     await ClockCycles(dut.clk, 10)
     

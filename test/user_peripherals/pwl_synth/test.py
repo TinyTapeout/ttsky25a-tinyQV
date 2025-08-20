@@ -10,7 +10,7 @@ from tqv import TinyQV
 # When submitting your design, change this to the peripheral number
 # in peripherals.v.  e.g. if your design is i_user_peri05, set this to 5.
 # The peripheral number is not used by the test harness.
-PERIPHERAL_NUM = 7
+PERIPHERAL_NUM = 33
 
 def read_pwm_out(dut):
 	data = dut.uo_out.value.integer

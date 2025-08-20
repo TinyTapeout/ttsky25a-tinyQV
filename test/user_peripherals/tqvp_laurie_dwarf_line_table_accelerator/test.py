@@ -7,7 +7,7 @@ from cocotb.triggers import ClockCycles
 
 from tqv import TinyQV
 
-PERIPHERAL_NUM = 9
+PERIPHERAL_NUM = 34
 
 class MmReg:
     PROGRAM_HEADER    = 0x00

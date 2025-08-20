@@ -12,9 +12,7 @@ module tqvp_dsatizabal_fpu (
     input  [1:0]  data_write_n,
     input  [1:0]  data_read_n,
     output [31:0] data_out,
-    output        data_ready,
-
-    output        user_interrupt
+    output        data_ready
 );
 
     // === Memory-mapped Registers ===
@@ -145,6 +143,5 @@ module tqvp_dsatizabal_fpu (
     assign data_ready       = ready;
 
     assign uo_out           = 0;
-    assign user_interrupt   = 0;
 
 endmodule

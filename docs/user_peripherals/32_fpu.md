@@ -2,7 +2,7 @@
 
 Author: Diego Satizanal
 
-Peripheral index: 4
+Peripheral index: 32
 
 ## What it does
 

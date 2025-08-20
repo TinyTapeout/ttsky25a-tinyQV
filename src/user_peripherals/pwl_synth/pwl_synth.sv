@@ -25,9 +25,10 @@ module tqvp_toivoh_pwl_synth #(parameter BITS=12, OCT_BITS=3, DETUNE_EXP_BITS=3,
 		input [1:0]   data_read_n,  // 11 = no read,  00 = 8-bits, 01 = 16-bits, 10 = 32-bits
 
 		output [31:0] data_out,     // Data out from the peripheral, bottom 8, 16 or all 32 bits are valid on read when data_ready is high.
-		output        data_ready,
+		output        data_ready
 
 `ifdef USE_TEST_INTERFACE
+		,
 		input wire en_external,
 		input wire state_override_en,
 		input int state_override, // (term_index << 8) | state
@@ -41,8 +42,6 @@ module tqvp_toivoh_pwl_synth #(parameter BITS=12, OCT_BITS=3, DETUNE_EXP_BITS=3,
 		output int reg_waddr_internal_out,
 		output int reg_wdata_internal_out,
 `endif
-
-		output        user_interrupt  // Dedicated interrupt request for this peripheral
 	);
 
 	wire reset = !rst_n;
@@ -157,7 +156,6 @@ module tqvp_toivoh_pwl_synth #(parameter BITS=12, OCT_BITS=3, DETUNE_EXP_BITS=3,
 	assign uo_out = pwm_out ? '1 : 0;
 
 	assign data_out = reg_rdata;
-	assign user_interrupt = 1'b0;
 endmodule
 
 

@@ -2,7 +2,7 @@
 
 Author: Laurie Hedge
 
-Peripheral index: 9
+Peripheral index: 34
 
 ## What it does
 
