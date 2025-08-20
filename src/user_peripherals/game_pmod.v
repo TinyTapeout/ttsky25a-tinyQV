@@ -98,6 +98,7 @@ module gamepad_pmod_driver #(
 endmodule
 
 // Peripheral for interfacing with the TT Game PMOD
+(* keep_hierarchy *)
 module tqvp_game_pmod (
     input         clk,
     input         rst_n,

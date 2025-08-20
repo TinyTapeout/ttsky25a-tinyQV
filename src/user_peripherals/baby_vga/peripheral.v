@@ -8,6 +8,7 @@
 // Change the name of this module to something that reflects its functionality and includes your name for uniqueness
 // For example tqvp_yourname_spi for an SPI peripheral.
 // Then edit tt_wrapper.v line 41 and change tqvp_example to your chosen module name.
+(* keep_hierarchy *)
 module tqvp_htfab_baby_vga (
     input  wire        clk,          // Clock - the TinyQV project clock is normally set to 64MHz.
     input  wire        rst_n,        // Reset_n - low to reset.

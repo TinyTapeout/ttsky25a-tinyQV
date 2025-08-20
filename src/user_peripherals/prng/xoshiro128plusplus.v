@@ -2,6 +2,7 @@
 // Implements xoshiro128++ by David Blackman and Sebastiano Vigna: https://prng.di.unimi.it/xoshiro128plusplus.c
 // See also: https://prng.di.unimi.it/
 
+(* keep_hierarchy *)
 module xoshiro128plusplus (
     input  wire        clk,
     input  wire        rst_n,

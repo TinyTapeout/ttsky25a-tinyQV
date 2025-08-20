@@ -1,5 +1,6 @@
 `default_nettype none
 
+(* keep_hierarchy *)
 module tqvp_dsatizabal_fpu (
     input         clk,
     input         rst_n,

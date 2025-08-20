@@ -5,6 +5,7 @@
 
 `default_nettype none
 
+(* keep_hierarchy *)
 module tqvp_laurie_dwarf_line_table_accelerator(
     // Clock and reset.
     input         clk,

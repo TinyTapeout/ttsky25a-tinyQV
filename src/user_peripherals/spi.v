@@ -99,6 +99,7 @@ module tqvp_spi_ctrl (
 
 endmodule
 
+(* keep_hierarchy *)
 module tqvp_spi_peripheral (
     input         clk,
     input         rst_n,

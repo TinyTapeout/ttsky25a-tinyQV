@@ -5,6 +5,7 @@
 
 `default_nettype none
 
+(* keep_hierarchy *)
 module tqvp_rebeccargb_universal_decoder (
     input         clk,          // Clock - the TinyQV project clock is normally set to 64MHz.
     input         rst_n,        // Reset_n - low to reset.

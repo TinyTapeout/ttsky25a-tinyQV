@@ -4,6 +4,7 @@
  */
 `default_nettype none
 
+(* keep_hierarchy *)
 module tqvp_spike (
   input wire clk,
   input wire rst_n,

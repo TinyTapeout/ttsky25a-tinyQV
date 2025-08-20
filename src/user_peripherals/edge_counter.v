@@ -5,6 +5,7 @@
 
 `default_nettype none
 
+(* keep_hierarchy *)
 module tqvp_edge_counter #(
     parameter ADDR_RESET     = 4'h0,  // write = counter ← 0
     parameter ADDR_INCREMENT = 4'h1,  // write = counter ← counter + 1

@@ -6,7 +6,7 @@
 `default_nettype none
 `include "pwl_synth.vh"
 
-
+(* keep_hierarchy *)
 module tqvp_toivoh_pwl_synth #(parameter BITS=12, OCT_BITS=3, DETUNE_EXP_BITS=3, SLOPE_EXP_BITS=4, NUM_CHANNELS=4) (
 		input         clk,          // Clock - the TinyQV project clock is normally set to 64MHz.
 		input         rst_n,        // Reset_n - low to reset.

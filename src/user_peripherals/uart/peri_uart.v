@@ -6,6 +6,7 @@
 `default_nettype none
 
 // UART peripheral - this wraps both TX and RX UART
+(* keep_hierarchy *)
 module tqvp_uart_wrapper #(
     parameter DIVIDER_REG_LEN = 13,        // Enough to allow baud rates down to 9600 at 64MHz clock
     parameter CLOCK_MHZ = 64

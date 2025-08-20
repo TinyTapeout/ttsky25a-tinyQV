@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 `default_nettype none
+(* keep_hierarchy *)
 module tqvp_pwm_sujith(
     input clk, rst_n,
     input [7:0] ui_in,
