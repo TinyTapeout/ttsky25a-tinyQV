@@ -767,7 +767,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .data_ready(data_ready_from_user_peri[20])
     );
 
-    tqvp_full_example_no_irq i_user_peri37 (
+    tqvp_rebeccargb_intercal_alu i_user_peri37 (
         .clk(clk),
         .rst_n(rst_n),
 

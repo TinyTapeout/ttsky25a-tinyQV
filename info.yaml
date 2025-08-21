@@ -89,6 +89,8 @@ project:
     - "user_peripherals/ubcd/ubcd.v"
     - "user_peripherals/analog_toolkit/fp_counter.v"
     - "user_peripherals/analog_toolkit/peripheral.v"
+    - "user_peripherals/intercal_alu/intercal-alu.v"
+    - "user_peripherals/intercal_alu/peripheral.v"
     - "tinyQV/cpu/tinyqv.v"
     - "tinyQV/cpu/alu.v"
     - "tinyQV/cpu/core.v"

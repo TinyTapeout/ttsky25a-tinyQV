@@ -74,13 +74,13 @@ module tqvp_crc32(
     // Read transactions
     always @(*) begin
         case (address)
-            ADDR_CRC_BYTE0: data_out = crc_result[7:0];  
-            ADDR_CRC_BYTE1: data_out = crc_result[15:8];  
-            ADDR_CRC_BYTE2: data_out = crc_result[23:16];  
+            ADDR_CRC_BYTE0: data_out = crc_result[7:0];
+            ADDR_CRC_BYTE1: data_out = crc_result[15:8];
+            ADDR_CRC_BYTE2: data_out = crc_result[23:16];
             ADDR_CRC_BYTE3: data_out = crc_result[31:24];
-            default: data_out = 8'h0;  
-        endcase;
-    end;
+            default: data_out = 8'h0;
+        endcase
+    end
 
     assign crc_result = ~crc_buf;
 
