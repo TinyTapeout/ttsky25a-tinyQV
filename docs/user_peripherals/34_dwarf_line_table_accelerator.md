@@ -54,7 +54,7 @@ This peripheral only supports version 5 of the DWARF format.
 
 Unknown instructions set STATUS to STATUS_ILLEGAL and halt execution of the program, rather than being silently ignored.
 
-Since this peripheral was designed as a companion to the TinyQV CPU, it only support a limited subset of the full DWARF line table accelerator abstract machine. In particular, it has the following limitations.
+Since this peripheral was designed as a companion to the TinyQV CPU, it only supports a limited subset of the full DWARF line table accelerator abstract machine. In particular, it has the following limitations.
 
 * The `address` register is limited to 28 bits to match the number of physical address bits supported by TinyQV.
 * The `op_index` register is not implemented since it is only used for VLIW, which are not applicable to RV32EC.
@@ -174,46 +174,63 @@ This register contains information about the version of the hardware and the ran
 
 ## How to test
 
-Tests should be run from inside a Docker container using a Docker image built from
-tinyqv-dwarf-peripheral/.devcontainer/Dockerfile.
+Start by reading INFO and STATUS. INFO should report version 1 of the hardware, with a min and max supported DWARF format of 5, and STATUS should report STATUS_READY.
 
-### Unit tests
-
-The unit tests are hand written tests using the cocotb test framework, covering each instruction and various interesting cases.
-
-To run the tests, from inside the Docker container, run
-```sh
-cd /path/to/ttsky25a-tinyQV/test
-make -B tqvp_laurie_dwarf_line_table_accelerator.test
-```
-
-### RIS tests
-
-_These are only available in the [peripheral's own repository](https://github.com/laurie-hedge/tinyqv-dwarf-peripheral) and have not been merged to the ttsky25a-tinyQV repository._
-
-Random Instruction Sequence (RIS) tests work by generating a semi-random sequence of instructions to execute, and then running these instructions of both the peripheral (simulated by verilating the HDL) and through a simulator written in C++ which acts as a golden reference. The testbench compares the results of each to ensure they produce the same results. Since these tests are random, they will vary each time the tests are run, so are not run as part of CI.
-
-To run these tests, from inside the Docker container, run
-```sh
-cd /path/to/tinyqv-dwarf-peripheral/ris-test
-make
-./obj_dir/testbench --run 100
-```
-
-This will run 100 randomly generated tests. You can change the number to run as many tests as you want. If a test fails, it will report the error and save a file called `test.bin`. This file captures the input into the specific test that failed, so that it can be replayed and debugged.
-
-To replay a test.bin file, from the same directory as before, run
-```sh
-./obj_dir/testbench --rerun test.bin
-```
-
-To enable generation of the waves for the test, uncomment this section at the bottom of `tqvp_laurie_dwarf_line_table_accelerator.sv`.
 ```c
-// initial begin
-//     $dumpfile("trace.vcd");
-//     $dumpvars();
-// end
+assert(*INFO == 0x155);
+assert(*STATUS == 0);
 ```
+
+While the AM registers only need to be read when STATUS is STATUS_EMIT_ROW, they can be read at any point to get a snapshot of the current state of the abstract machine, although when STATUS is STATUS_BUSY, this state will not be stable since instructions that change the state of the abstract machine are being executed on the peripheral.
+
+Since no instructions have been executed, AM_ADDRESS will be 0, AM_FILE_DISCRIM will be 1 (file defaults to 1, discrim to 0), and AM_LINE_COL_FLAGS will be 1 (line defaults to 1, col and flags to 0).
+```c
+assert(*AM_ADDRESS == 0);
+assert(*AM_FILE_DISCRIM == 1);
+assert(*AM_LINE_COL_FLAGS == 1);
+```
+
+Next, write a program header. For testing, set opcode_base to 13 since this enables all standard opcodes. Set line_base to -3 and line_range to 7, so that special instructions have a line advance range of -3 to 3.
+
+```c
+*PROGRAM_HEADER = 0x0D07FD00;
+```
+
+The accelerator is now ready to execute DWARF line table instructions.
+
+The standard instruction set file will write a ULEB128 encoded number to file in the abstract machine. Set file is opcode 4, so use 0x6F04 to write 111 to file. After writing the instruction to PROGRAM_CODE, poll STATUS until it is in STATUS_READY before reading the updated state of the abstract machine.
+
+```c
+*(uint16_t*)PROGRAM_CODE = 0x6F04;
+while (*STATUS != 0);
+assert(*(uint16_t*)AM_FILE_DISCRIM == 111);
+```
+
+The extended instruction set discriminator will write a ULEB128 encoded number to discriminator in the abstract machine. Extended instructions start with opcode 0, followed by the size of the instruction encoded in ULEB128, followed by the opcode (4 for set discriminator). In the case of set disciminator, this is then followed by a ULED128 operand. Write 0x37040200 to PROGRAM_CODE to set discriminator to 55, again polling STATUS before reading the update to the abstract machine.
+
+```c
+*PROGRAM_CODE = 0x37040200;
+while (*STATUS != 0);
+assert(*(uint16_t*)(AM_FILE_DISCRIM + 2) == 55);
+```
+
+Special instructions are encoded as a single byte, and will update both the address and the line. They also emit a row. Given the program header above, use the special instruction 0x21 to increment the address by 2 and the line by 3. This time poll STATUS for STATUS_EMIT_ROW before reading the updated abstract machine state.
+
+```c
+*(uint8_t*)PROGRAM_CODE = 0x21;
+while (*STATUS != 1);
+assert(*AM_ADDRESS == 2);
+assert(*(uint16_t*)AM_LINE_COL_FLAGS == 4);
+```
+
+Return the machine to the ready state by writing to the STATUS register.
+
+```c
+*STATUS = 0;
+assert(*STATUS == 0);
+```
+
+The accelerator is now ready to receive further instructions. Try writing other instructions from the DWARF spec to the accelerator, or for a larger project, try reading a line table program emitted by a compiler like gcc into memory and running it through the accelerator.
 
 ## External hardware
 
