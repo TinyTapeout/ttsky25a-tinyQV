@@ -379,7 +379,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .user_interrupt(user_interrupts[12])
     );
 
-    tqvp_full_example i_user_peri13 (
+    tqvp_cattuto_vgaconsole i_tqvp_cattuto_vgaconsole (
         .clk(clk),
         .rst_n(rst_n),
 

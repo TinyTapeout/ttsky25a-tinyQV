@@ -6,6 +6,7 @@ USER_PERIPHERALS = \
 	game_pmod \
 	matt_encoder.test \
 	ledstrip.test \
+	vgaconsole.test \
 	impostor_ws2812b.test \
 	matt_pwm.test \
     test_spike  \
