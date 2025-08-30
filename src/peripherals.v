@@ -22,7 +22,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
     input  [7:0]  ui_in_raw,    // The input PMOD, not synchronized
     output [7:0]  uo_out,       // The output PMOD.  Each wire is only connected if this peripheral is selected
 
-    output        audio,        // An extra output that can be selected on to uio[7]
+    output reg    audio,        // An extra output that can be selected on to uio[7]
     output        audio_select, // Whether audio should be selected on uio[7] (resets to 0).
 
     input [10:0]  addr_in,
@@ -180,10 +180,15 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         end
     end
 
-    assign audio = (audio_func_sel[1:0] == 2'b00) ? uo_out_from_user_peri[17][7] :   // PWL synth
-                   (audio_func_sel[1:0] == 2'b01) ? uo_out_from_user_peri[11][7] :   // Pulse TX
-                   (audio_func_sel[1:0] == 2'b10) ? uo_out_from_simple_peri[4][0] :  // PWM
-                                                    uo_out_from_simple_peri[5][7];   // Matt PWM
+    always @(posedge clk) begin
+        case (audio_func_sel[1:0])
+            2'b00: audio <= uo_out_from_user_peri[17][7];   // PWL synth
+            2'b01: audio <= uo_out_from_user_peri[11][7];   // Pulse TX
+            2'b10: audio <= uo_out_from_simple_peri[4][0];  // PWM
+            2'b11: audio <= uo_out_from_simple_peri[5][7];  // Matt PWM
+        endcase
+    end
+
     assign audio_select = audio_func_sel[2];
 
     // --------------------------------------------------------------------- //
