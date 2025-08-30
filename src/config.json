@@ -38,10 +38,11 @@
 
   "//": "Routing tweaks",
   "DESIGN_REPAIR_MAX_SLEW_PCT": 25,
-  "DESIGN_REPAIR_REMOVE_BUFFERS": 1,
   "RUN_HEURISTIC_DIODE_INSERTION": 1,
   "RUN_ANTENNA_REPAIR": 1,
   "HEURISTIC_ANTENNA_THRESHOLD": 200,
+  "GRT_ANTENNA_ITERS": 5,
+  "GRT_ANTENNA_MARGIN": 20,
 
   "//": "If you need a custom clock configuration, read the following documentation first:",
   "//": "https://tinytapeout.com/faq/#how-can-i-map-an-additional-external-clock-to-one-of-the-gpios",
