@@ -72,7 +72,7 @@ module tqvp_spi_ctrl (
                     spi_clk_out <= 0;
                 end
             end else begin
-                clock_count <= clock_count + 4'b0001;
+                clock_count <= clock_count + 7'h1;
                 if (clock_count == clock_divider) begin
                     clock_count <= 0;
                     spi_clk_out <= !spi_clk_out;
@@ -171,9 +171,9 @@ module tqvp_spi_peripheral (
         .read_latency_in(data_in[7])
     );
 
-    assign uo_out[1:0] = spi_select;
+    assign uo_out[1:0] = {2{spi_select}};
     assign uo_out[4] = spi_select;
-    assign uo_out[7:6] = spi_select;
+    assign uo_out[7:6] = {2{spi_select}};
 
     // Address 0 reads the control/status register.  
     // Address 1 reads back tx_data
@@ -183,5 +183,8 @@ module tqvp_spi_peripheral (
                       (address == 4'h1) ? tx_data :
                       (address == 4'h2) ? rx_data :
                       8'h0;    
+
+    // List all unused inputs to prevent warnings
+    wire _unused = &{ui_in[7:3], ui_in[1:0], 1'b0};
 
 endmodule
