@@ -20,6 +20,7 @@ USER_PERIPHERALS = \
 	pulse_transmitter.test \
 	crc32 \
 	prng.test \
+        tinytone \
 	hardware_utf8.test
 
 # Add new tests to this list
