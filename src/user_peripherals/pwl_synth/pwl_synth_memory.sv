@@ -9,13 +9,13 @@
 `ifdef USE_LATCHES
 
 module pwls_shared_data #(parameter BITS=16) (
-		input wire clk, reset,
+		input wire clk, rst_n,
 		input wire [BITS-1:0] in,
 		output wire [BITS-1:0] out
 	);
 	genvar i;
 
-	wire [BITS-1:0] data_in = reset ? '0 : in;
+	wire [BITS-1:0] data_in = !rst_n ? '0 : in;
 	wire [BITS-1:0] latch_out;
 	generate
 		for (i = 0; i < BITS; i++) begin
@@ -40,7 +40,7 @@ module pwls_shared_data #(parameter BITS=16) (
 endmodule : pwls_shared_data
 
 module pwls_register #(parameter BITS=16) (
-		input wire clk, reset,
+		input wire clk, rst_n,
 		input wire we,
 		input wire [BITS-1:0] wdata,
 		output wire [BITS-1:0] rdata
@@ -49,10 +49,10 @@ module pwls_register #(parameter BITS=16) (
 
 	wire gclk;
 `ifdef SCL_sky130_fd_sc_hd
-	sky130_fd_sc_hd__dlclkp_1 clock_gate(.CLK(clk), .GATE(we || reset), .GCLK(gclk));
+	sky130_fd_sc_hd__dlclkp_1 clock_gate(.CLK(clk), .GATE(we || !rst_n), .GCLK(gclk));
 `endif
 `ifdef SCL_sg13g2_stdcell
-	sg13g2_lgcp_1 clock_gate(.CLK(clk), .GATE(we || reset), .GCLK(gclk));
+	sg13g2_lgcp_1 clock_gate(.CLK(clk), .GATE(we || !rst_n), .GCLK(gclk));
 `endif
 
 	generate
@@ -70,7 +70,7 @@ endmodule
 `else // not USE_LATCHES
 
 module pwls_shared_data #(parameter BITS=16) (
-		input wire clk, reset,
+		input wire clk, rst_n,
 		input wire [BITS-1:0] in,
 		output wire [BITS-1:0] out
 	);
@@ -78,14 +78,14 @@ module pwls_shared_data #(parameter BITS=16) (
 endmodule : pwls_shared_data
 
 module pwls_register #(parameter BITS=16) (
-		input wire clk, reset,
+		input wire clk, rst_n,
 		input wire we,
 		input wire [BITS-1:0] wdata,
 		output wire [BITS-1:0] rdata
 	);
 	reg [BITS-1:0] data;
 	always_ff @(posedge clk) begin
-		if (reset) data <= 0;
+		if (!rst_n) data <= 0;
 		else if (we) data <= wdata;
 	end
 	assign rdata = data;

@@ -622,7 +622,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .data_out(data_from_simple_peri[11])
     );
 
-    tqvp_byte_example i_user_simple012 (
+    tqvp_htfab_vga_tester vga_tester (
         .clk(clk),
         .rst_n(rst_n),
 

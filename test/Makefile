@@ -1,42 +1,53 @@
-USER_PERIPHERALS = \
-	edge_counter \
-	pwm_sk \
-	uart \
-	spi \
-	game_pmod \
-	matt_encoder.test \
-	ledstrip.test \
-	vgaconsole.test \
-	impostor_ws2812b.test \
-	matt_pwm.test \
-    test_spike  \
-	fpu.test \
-	baby_vga.test \
-	prism.test \
-	pwl_synth.test \
-	wdt.test \
-	RV2A03.test \
-	tqvp_laurie_dwarf_line_table_accelerator.test \
-	pulse_transmitter.test \
-	crc32 \
-	prng.test \
-        mkTinyTone_Peripheral \
-	hardware_utf8.test
+USER_PERIPHERAL_2 = uart
+USER_PERIPHERAL_3 = game_pmod
+USER_PERIPHERAL_4 = npu.test
+USER_PERIPHERAL_5 = baby_vga.test
+USER_PERIPHERAL_6 = wdt.test
+USER_PERIPHERAL_7 =
+USER_PERIPHERAL_8 = prism.test
+USER_PERIPHERAL_9 =
+USER_PERIPHERAL_10 = pdm.test
+USER_PERIPHERAL_11 = pulse_transmitter.test
+USER_PERIPHERAL_12 =
+USER_PERIPHERAL_13 = vgaconsole.test
+USER_PERIPHERAL_14 =
+USER_PERIPHERAL_15 = mkTinyTone_Peripheral
+USER_PERIPHERAL_16 = matt_encoder.test
+USER_PERIPHERAL_17 = edge_counter
+USER_PERIPHERAL_18 = ledstrip.test
+USER_PERIPHERAL_19 = impostor_ws2812b.test
+USER_PERIPHERAL_20 = pwm_sk
+USER_PERIPHERAL_21 = matt_pwm.test
+USER_PERIPHERAL_22 = test_spike
+USER_PERIPHERAL_23 = ubcd.test
+USER_PERIPHERAL_24 = hardware_utf8.test
+USER_PERIPHERAL_25 = waveforms.test
+USER_PERIPHERAL_26 = analog_toolkit.test
+USER_PERIPHERAL_27 = crc32
+USER_PERIPHERAL_28 = vga_tester.test
+USER_PERIPHERAL_29 = rsa.test
+USER_PERIPHERAL_30 = spi
+USER_PERIPHERAL_31 =
+USER_PERIPHERAL_32 = fpu.test
+USER_PERIPHERAL_33 = pwl_synth.test
+USER_PERIPHERAL_34 = tqvp_laurie_dwarf_line_table_accelerator.test
+USER_PERIPHERAL_35 = prng.test
+USER_PERIPHERAL_36 = RV2A03.test
+USER_PERIPHERAL_37 = intercal_alu.test
+USER_PERIPHERAL_38 = CORDIC.test_trigonometric_simple \
+					 CORDIC.test_linear_simple \
+					 CORDIC.test_hyperbolic_vectoring_square_vis \
+					 CORDIC.test_hyperbolic_vectoring_simple \
+					 CORDIC.test_hyperbolic_rotating_sweep_and_vis \
+					 CORDIC.test_hyperbolic_rotating_simple \
+					 CORDIC.test_circular_rotating_sweep_and_vis
+USER_PERIPHERAL_39 = affinex.test
 
-# Add new tests to this list
-USER_PERIPHERALS_B = \
-	waveforms.test \
-	pdm.test \
-	ubcd.test \
-	analog_toolkit.test \
-	rsa.test \
-	intercal_alu.test \
-	affinex.test \
-	npu.test \
-	CORDIC.test_trigonometric_simple CORDIC.test_linear_simple CORDIC.test_hyperbolic_vectoring_square_vis CORDIC.test_hyperbolic_vectoring_simple \
-	CORDIC.test_hyperbolic_rotating_sweep_and_vis CORDIC.test_hyperbolic_rotating_simple CORDIC.test_circular_rotating_sweep_and_vis
+expand_tests = $(foreach num,$(1),$(USER_PERIPHERAL_$(num)))
+PERI_NUMBERS = $(shell seq 2 39)
+ALL_TESTS = $(call expand_tests,$(PERI_NUMBERS))
 
-.PHONY: all core prog peri $(USER_PERIPHERALS) $(USER_PERIPHERALS_B)
+.PHONY: clean core prog peri_test_% peri_num_% $(ALL_TESTS)
 
 %-results.xml:
 	@make -f test_$*.mk clean
@@ -53,8 +64,10 @@ peri-%.xml:
 	@mv sim_build/rtl/tb.fst $*-rtl.fst || true
 	@mv sim_build/gl/tb.fst $*-gl.fst || true
 
-all: clean basic-results.xml prog-results.xml $(USER_PERIPHERALS:%=peri-%.xml) $(USER_PERIPHERALS_B:%=peri-%.xml)
-	@cat *results.xml peri-*.xml > results.xml
+$(ALL_TESTS): %: peri-%.xml
+
+clean:
+	rm *results.xml peri-*.xml *.fst sim_build/rtl/tb.fst sim_build/gl/tb.fst || true
 
 core: clean basic-results.xml
 	@cat *results.xml > results.xml
@@ -62,15 +75,7 @@ core: clean basic-results.xml
 prog: clean prog-results.xml
 	@cat *results.xml > results.xml
 
-peri: clean $(USER_PERIPHERALS:%=peri-%.xml)
-	@cat peri-*.xml > results.xml
+.SECONDEXPANSION:
+peri_num_%: clean $$(call expand_tests,%)
+	@if [ "$(USER_PERIPHERAL_$*)" != "" ]; then cat peri-*.xml; else echo '<testsuites name="results" />'; fi > results.xml
 
-peri_b: clean $(USER_PERIPHERALS_B:%=peri-%.xml)
-	@cat peri-*.xml > results.xml
-
-$(USER_PERIPHERALS): %: peri-%.xml
-
-$(USER_PERIPHERALS_B): %: peri-%.xml
-
-clean:
-	rm *results.xml peri-*.xml *.fst sim_build/rtl/tb.fst sim_build/gl/tb.fst || true

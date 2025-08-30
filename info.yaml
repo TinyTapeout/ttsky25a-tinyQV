@@ -119,6 +119,7 @@ project:
     - "user_peripherals/CORDIC/CORDIC.v"
     - "user_peripherals/CORDIC/defines.v"
     - "user_peripherals/npu/peripheral.v"
+    - "user_peripherals/vga_tester/peripheral.v"
     - "tinyQV/cpu/tinyqv.v"
     - "tinyQV/cpu/alu.v"
     - "tinyQV/cpu/core.v"

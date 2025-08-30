@@ -9,6 +9,7 @@
 `endif
 
 `define USE_PHASE_LATCHES
+`define USE_OCT_COUNTER_LATCHES
 `define USE_NEW_READ
 
 `define USE_SLOPE_EXP_REGS
@@ -21,6 +22,12 @@
 `define USE_PWL_OSC
 `define USE_ORION_WAVE
 `define USE_ORION_MASK
+`define USE_STEREO
+
+
+`ifdef USE_STEREO
+`define USE_GLOBAL_CFG_REG
+`endif
 
 // Only used for verilator tests
 //// `define USE_TEST_INTERFACE
@@ -37,7 +44,7 @@
 	`define CHANNEL_MODE_BITS 9
 	`ifdef USE_NEW_REGMAP_B
 		`define REGS_PER_CHANNEL 8
-		`define REG_BITS 16 // Could be 13? If the registers don't grow too much
+		`define REG_BITS 13 // Could be 13? If the registers don't grow too much
 	`else
 		`define USE_NEW_REGMAP_A
 		`define REGS_PER_CHANNEL 6
@@ -59,6 +66,10 @@
 	`define REG_ADDR_BITS 5
 `endif
 
+
+`define CFG_BIT_STEREO_EN 0
+
+
 // 0-2: detune_exp
 `define CHANNEL_MODE_BIT_NOISE 3
 //// 4-7, 8-11: slope_exp
@@ -78,6 +89,11 @@
 
 `define DIVIDER_BITS 24
 `define SWEEP_DIR_BITS 3
+
+`define DETUNE_SRC_CONTROL_BITS 3
+`define DETUNE_SRC_CONTROL_BIT_HIGH_OVERIDE_EN 0
+`define DETUNE_SRC_CONTROL_BIT_HIGH_OVERIDE    1
+`define DETUNE_SRC_CONTROL_BIT_LOW_OVERIDE_EN  2
 
 
 `ifdef USE_ORION_WAVE
@@ -142,6 +158,7 @@
 `define PART_SEL_NOSAT   3
 `define PART_SEL_READ    4 // only used if USE_NEW_READ
 `define PART_SEL_ZERO    5 // only used if USE_ORION_WAVE
+`define PART_SEL_CARRY   6 // only used if USE_OCT_COUNTER_LATCHES
 
 
 // synced with SRC1_SEL_*** and register address bits
@@ -164,8 +181,13 @@
 `define TST_ADDR_PART 3
 `define TST_ADDR_LFSR_EXTRA_BITS 4
 `define TST_ADDR_OCT_COUNTER 5
+`define TST_ADDR_OUT_ACC_ALT_FRAC 6
 
 
+
+
+//`define ALWAYS_FF_POSEDGE_CLK always_ff @(posedge clk)
+`define ALWAYS_FF_POSEDGE_CLK always_ff @(posedge clk, negedge rst_n)
 
 
 //`define PIPELINE

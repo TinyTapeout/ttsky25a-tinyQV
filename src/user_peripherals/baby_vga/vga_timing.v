@@ -14,19 +14,19 @@ module vga_timing (
     output reg interrupt
 );
 
-// 1024x768 60Hz CVT (63.5 MHz pixel clock, rounded to 64 MHz) - courtesy of RebelMike
+// 1024x768 60Hz DMT (65 MHz pixel clock, used at 64 MHz)
 
 `define H_ROLL   31
 `define H_FPORCH (32 * 32)
-`define H_SYNC   (33 * 32 + 16)
-`define H_BPORCH (36 * 32 + 24)
-`define H_NEXT   (41 * 32 + 15)
+`define H_SYNC   (32 * 32 + 24)
+`define H_BPORCH (37 * 32)
+`define H_NEXT   (41 * 32 + 31)
 
 `define V_ROLL   47
 `define V_FPORCH (16 * 64)
 `define V_SYNC   (16 * 64 + 3)
-`define V_BPORCH (16 * 64 + 7)
-`define V_NEXT   (16 * 64 + 29)
+`define V_BPORCH (16 * 64 + 9)
+`define V_NEXT   (16 * 64 + 37)
 
 always @(posedge clk) begin
     if (!rst_n) begin
@@ -51,19 +51,20 @@ always @(posedge clk) begin
             if({y_hi, y_lo} == `V_NEXT) begin
                 y_hi <= 0;
                 y_lo <= 0;
-                interrupt <= 1;
+                interrupt <= 0;
             end else if (y_lo == `V_ROLL) begin
                 y_hi <= y_hi + 1;
                 y_lo <= 0;
             end else begin
                 y_lo <= y_lo + 1;
             end
+            if({y_hi, y_lo} == `V_FPORCH) begin
+                interrupt <= 1;
+            end
         end
         hsync <= !({x_hi, x_lo} >= `H_SYNC && {x_hi, x_lo} < `H_BPORCH);
-        vsync <= ({y_hi, y_lo} >= `V_SYNC && {y_hi, y_lo} < `V_BPORCH);
-        if (cli || {y_hi, y_lo} == 0) begin
-            interrupt <= 0;
-        end
+        vsync <= !({y_hi, y_lo} >= `V_SYNC && {y_hi, y_lo} < `V_BPORCH);
+        if (cli) interrupt <= 0;
     end
 end
 

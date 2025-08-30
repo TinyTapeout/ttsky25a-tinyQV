@@ -2,6 +2,50 @@ name: test
 on: [push, workflow_dispatch, pull_request]
 jobs:
   test:
+    strategy:
+      matrix:
+        target:
+          - core
+          - prog
+          - peri_num_2
+          - peri_num_3
+          - peri_num_4
+          - peri_num_5
+          - peri_num_6
+          - peri_num_7
+          - peri_num_8
+          - peri_num_9
+          - peri_num_10
+          - peri_num_11
+          - peri_num_12
+          - peri_num_13
+          - peri_num_14
+          - peri_num_15
+          - peri_num_16
+          - peri_num_17
+          - peri_num_18
+          - peri_num_19
+          - peri_num_20
+          - peri_num_21
+          - peri_num_22
+          - peri_num_23
+          - peri_num_24
+          - peri_num_25
+          - peri_num_26
+          - peri_num_27
+          - peri_num_28
+          - peri_num_29
+          - peri_num_30
+          - peri_num_31
+          - peri_num_32
+          - peri_num_33
+          - peri_num_34
+          - peri_num_35
+          - peri_num_36
+          - peri_num_37
+          - peri_num_38
+          - peri_num_39
+      fail-fast: false
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repo
@@ -27,7 +71,7 @@ jobs:
         run: |
           cd test
           make clean
-          make
+          make ${{ matrix.target }}
           # make will return success even if the test fails, so check for failure in the results.xml
           ! grep failure results.xml
 
@@ -41,7 +85,7 @@ jobs:
         if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-vcd
+          name: test-vcd-${{ matrix.target }}
           path: |
             test/*.fst
             test/results.xml
