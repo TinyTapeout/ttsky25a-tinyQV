@@ -265,7 +265,7 @@ async def test_audio(dut):
     await start_read(dut, 0)
 
     # Enable PWM audio
-    await send_instr(dut, InstructionADDI(x1, x0, 0x7).encode())
+    await send_instr(dut, InstructionADDI(x1, x0, 0xb).encode())
     await send_instr(dut, InstructionSW(tp, x1, 0x50).encode())
     
     for pwm in (5, 23, 57, 240):
@@ -277,7 +277,7 @@ async def test_audio(dut):
 
         await stop_nops()
 
-    await send_instr(dut, InstructionADDI(x1, x0, 0x6).encode())
+    await send_instr(dut, InstructionADDI(x1, x0, 0xa).encode())
     await send_instr(dut, InstructionSW(tp, x1, 0x50).encode())
     
     for pwm in (5, 23, 57, 240):

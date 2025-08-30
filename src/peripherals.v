@@ -123,7 +123,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
     // --------------------------------------------------------------------- //
     // GPIO
 
-    reg [2:0] audio_func_sel;
+    reg [3:0] audio_func_sel;
     reg [5:0] gpio_out_func_sel [0:7];
     reg [7:0] gpio_out;
 
@@ -139,7 +139,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
 
     assign data_from_user_peri[PERI_GPIO] = (addr_in[5:0] == 6'h0) ? {24'h0, gpio_out} :
                                             (addr_in[5:0] == 6'h4) ? {24'h0, ui_in}    :
-                                            (addr_in[5:0] == 6'h10)? {29'h0, audio_func_sel} :
+                                            (addr_in[5:0] == 6'h10)? {28'h0, audio_func_sel} :
                                             ({addr_in[5], addr_in[1:0]} == 3'b100) ? {26'h0, gpio_out_func_sel[addr_in[4:2]][5:0] } :
                                             32'h0;
     assign data_ready_from_user_peri[PERI_GPIO] = 1;
@@ -175,21 +175,25 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
             audio_func_sel <= 0;
         end else if (peri_user[PERI_GPIO]) begin
             if (addr_in[5:0] == 6'h10) begin
-                if (data_write_n != 2'b11) audio_func_sel <= data_in[2:0];
+                if (data_write_n != 2'b11) audio_func_sel <= data_in[3:0];
             end
         end
     end
 
     always @(posedge clk) begin
-        case (audio_func_sel[1:0])
-            2'b00: audio <= uo_out_from_user_peri[17][7];   // PWL synth
-            2'b01: audio <= uo_out_from_user_peri[11][7];   // Pulse TX
-            2'b10: audio <= uo_out_from_simple_peri[4][0];  // PWM
-            2'b11: audio <= uo_out_from_simple_peri[5][7];  // Matt PWM
+        case (audio_func_sel[2:0])
+            3'b000: audio <= uo_out_from_user_peri[17][7];   // PWL synth right
+            3'b001: audio <= uo_out_from_user_peri[11][7];   // Pulse TX
+            3'b010: audio <= uo_out_from_simple_peri[4][0];  // PWM
+            3'b011: audio <= uo_out_from_simple_peri[5][7];  // Matt PWM
+            3'b100: audio <= uo_out_from_user_peri[8][7];    // Prism
+            3'b101: audio <= uo_out_from_simple_peri[10][7]; // Analog toolkit
+            3'b110: audio <= uo_out_from_simple_peri[17][6]; // PWL Synth left
+            3'b111: audio <= uo_out_from_simple_peri[5][7];  // Matt PWM
         endcase
     end
 
-    assign audio_select = audio_func_sel[2];
+    assign audio_select = audio_func_sel[3];
 
     // --------------------------------------------------------------------- //
     // UART
