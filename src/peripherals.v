@@ -439,7 +439,6 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
 
         .user_interrupt(user_interrupts[15])
     );
-    );
 
     // --------------------------------------------------------------------- //
     // Byte interface peripherals
