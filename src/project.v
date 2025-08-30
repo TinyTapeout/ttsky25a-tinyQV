@@ -39,7 +39,9 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
     wire       qspi_flash_select;
     wire       qspi_ram_a_select;
     wire       qspi_ram_b_select;
-    assign uio_out = {qspi_ram_b_select, qspi_ram_a_select, qspi_data_out[3:2], 
+    wire       audio;
+    wire       audio_select;
+    assign uio_out = {audio_select ? audio : qspi_ram_b_select, qspi_ram_a_select, qspi_data_out[3:2], 
                       qspi_clk_out, qspi_data_out[1:0], qspi_flash_select};
     assign uio_oe = rst_n ? {2'b11, qspi_data_oe[3:2], 1'b1, qspi_data_oe[1:0], 1'b1} : 8'h00;
 
@@ -159,6 +161,9 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
         .ui_in(ui_in_sync),
         .ui_in_raw(ui_in),
         .uo_out(peri_out),
+
+        .audio(audio),
+        .audio_select(audio_select),
 
         .addr_in(addr[10:0]),
         .data_in(data_to_write),

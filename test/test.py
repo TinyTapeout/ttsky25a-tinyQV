@@ -5,7 +5,7 @@ import random
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles, Timer, FallingEdge
+from cocotb.triggers import ClockCycles, Timer, FallingEdge, RisingEdge
 from cocotb.utils import get_sim_time
 
 from riscvmodel.insn import *
@@ -231,6 +231,63 @@ async def test_debug_reg(dut):
         assert ((dut.uo_out.value >> 2) & 0xF) == ((val >> (4 * j)) & 0xF)
         await ClockCycles(dut.clk, 1)
     await stop_nops()
+
+async def test_pwm(dut, pwm_value, pwm_strobe):
+    
+    dut._log.info(f"sync to PWM rising edge")
+    # sync to pwm gen
+    await RisingEdge(dut.qspi_ram_b_select)
+    await FallingEdge(dut.qspi_ram_b_select)
+    await RisingEdge(dut.qspi_ram_b_select)
+    await ClockCycles(dut.clk, 1)
+    dut._log.info(f"assert {pwm_strobe * pwm_value} clocks of PWM high")
+    # assert the PWM is on for the length of time
+    for i in range(pwm_value):
+        assert dut.uio_out[7].value == 1, f"failed on cycle {i}"
+        await ClockCycles(dut.clk, pwm_strobe)
+    dut._log.info(f"assert {pwm_strobe * (255 - pwm_value)} clocks of PWM low")
+    for i in range(255 - pwm_value):
+        assert dut.uio_out[7].value == 0, f"failed on cycle {i}"
+        await ClockCycles(dut.clk, pwm_strobe)
+
+@cocotb.test()
+async def test_audio(dut):
+    dut._log.info("Start")
+
+    clock = Clock(dut.clk, 15.624, units="ns")
+    cocotb.start_soon(clock.start())
+
+    # Reset
+    await reset(dut)
+    
+    # Should start reading flash after 1 cycle
+    await ClockCycles(dut.clk, 1)
+    await start_read(dut, 0)
+
+    # Enable PWM audio
+    await send_instr(dut, InstructionADDI(x1, x0, 0x7).encode())
+    await send_instr(dut, InstructionSW(tp, x1, 0x50).encode())
+    
+    for pwm in (5, 23, 57, 240):
+        await send_instr(dut, InstructionADDI(x1, x0, pwm).encode())
+        await send_instr(dut, InstructionSB(tp, x1, 0x450).encode())
+        await start_nops(dut)
+
+        await test_pwm(dut, pwm, 1)
+
+        await stop_nops()
+
+    await send_instr(dut, InstructionADDI(x1, x0, 0x6).encode())
+    await send_instr(dut, InstructionSW(tp, x1, 0x50).encode())
+    
+    for pwm in (5, 23, 57, 240):
+        await send_instr(dut, InstructionADDI(x1, x0, pwm).encode())
+        await send_instr(dut, InstructionSB(tp, x1, 0x440).encode())
+        await start_nops(dut)
+
+        await test_pwm(dut, pwm, 1)
+
+        await stop_nops()
 
 @cocotb.test()
 async def test_load_bug(dut):

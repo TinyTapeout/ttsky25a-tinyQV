@@ -64,6 +64,7 @@ If MTIME is after MTIMECMP (by less than 2^30 microseconds to deal with wrap), t
 | -------- | ------- | ----------- |
 | OUT | 0x8000040 (RW) | Control for out0-7 if the GPIO peripheral is selected |
 | IN  | 0x8000044 (R) | Reads the current state of in0-7 |
+| AUDIO_FUNC_SEL | 0x8000050 (RW) | Audio function select for uo7 |
 | FUNC_SEL | 0x8000060 - 0x800007F (RW) | Function select for out0-7 |
 
 | Function Select | Peripheral |
@@ -71,9 +72,17 @@ If MTIME is after MTIMECMP (by less than 2^30 microseconds to deal with wrap), t
 | 0               | Disabled   |
 | 1               | GPIO       |
 | 2               | UART       |
-| 3               | Disabled   |
-| 4 - 15          | User peripheral 4-15 |
+| 3 - 15          | User peripheral 3-15 |
 | 16 - 31         | User byte peripheral 0-15 |
+| 32 - 39         | User peripheral 16-23 |
+
+| Audio function select | Peripheral |
+| --------------------- | ---------- |
+| 0-3                   | PSRAM B enabled |
+| 4                     | 33 PWL Synth out 7 |
+| 5                     | 11 Pulse Transmitter out 7 |
+| 6                     | 20 PWM out 0 |
+| 7                     | 21 Matt PWM out 1 |
 
 ### UART
 
