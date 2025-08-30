@@ -1,0 +1,22 @@
+    mkTinyTone_Peripheral i_tinytone15 (
+        .CLK(clk),
+        .RST_N(rst_n),
+
+        .uo_out_ui_in(ui_in),
+        .uo_out(uo_out_from_user_peri[15]),
+
+        .write_data_address(addr_in[5:0]),
+        .write_data_data(data_in),
+        .EN_write_data(1'b1),
+
+        .write_data_data_write_n(data_write_n    | {2{~peri_user[15]}}),
+        
+        .read_data_address(addr_in[5:0]),
+        .read_data_data_read_n(data_read_n_peri | {2{~peri_user[15]}}),
+        .EN_read_data(1'b1),
+
+        .read_data(data_from_user_peri[15]),
+        .data_ready(data_ready_from_user_peri[15]),
+
+        .user_interrupt(user_interrupts[15])
+    );

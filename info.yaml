@@ -81,6 +81,7 @@ project:
     - "user_peripherals/pulse_transmitter/simple_rising_edge_detector.v"
     - "user_peripherals/crc32.v"
     - "user_peripherals/hardware_utf8/hardware_utf8.v"
+    - "user_peripherals/mkTinyTone_Peripheral.v"
     - "user_peripherals/waveforms/font.sv"
     - "user_peripherals/waveforms/peripheral.sv"
     - "user_peripherals/pdm/cic3_pdm.v"
