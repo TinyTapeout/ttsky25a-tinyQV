@@ -51,6 +51,7 @@ See also [debug docs](debug.md)
 
 | Register | Address | Description |
 | -------- | ------- | ----------- |
+| MTIME_DIVIDER | 0x800002C | MTIME counts at clock / (MTIME_DIVIDER + 1).  Bits 0 and 1 are fixed at 1, so multiples of 4MHz are supported. |
 | MTIME    | 0xFFFFF00 (RW) | Get/set the 1MHz time count |
 | MTIMECMP | 0xFFFFF04 (RW) | Get/set the time to trigger the timer interrupt |
 

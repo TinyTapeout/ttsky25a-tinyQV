@@ -177,6 +177,56 @@ async def test_timer(dut):
     assert await read_reg(dut, a0) == 0x80000007
 
 @cocotb.test()
+async def test_time_limit(dut):
+    dut._log.info("Start")
+
+    clock = Clock(dut.clk, 15.624, units="ns")
+    cocotb.start_soon(clock.start())
+
+    # Reset
+    await reset(dut)
+
+    # Should start reading flash after 1 cycle
+    await ClockCycles(dut.clk, 1)
+    await start_read(dut, 0)
+
+    # Read time limit
+    await send_instr(dut, InstructionLW(x1, tp, 0x2c).encode())
+    assert await read_reg(dut, x1) == 0x3f
+
+    # Halve the divider, time should now advance twice as fast
+    await send_instr(dut, InstructionADDI(x1, x0, 0x1f).encode())
+    await send_instr(dut, InstructionSW(tp, x1, 0x2c).encode())
+
+    # Read time
+    await send_instr(dut, InstructionLW(x1, x0, -0x100).encode())
+    start_time = await read_reg(dut, x1)
+
+    await start_nops(dut)
+    await Timer(5, "us")
+    await stop_nops()
+
+    # Read time
+    await send_instr(dut, InstructionLW(x1, x0, -0x100).encode())
+    assert start_time+10 <= await read_reg(dut, x1) <= start_time+12
+
+    # Set divider to 96, time should advance more slowly
+    await send_instr(dut, InstructionADDI(x1, x0, 0x5f).encode())
+    await send_instr(dut, InstructionSW(tp, x1, 0x2c).encode())
+
+    # Read time
+    await send_instr(dut, InstructionLW(x1, x0, -0x100).encode())
+    start_time = await read_reg(dut, x1)
+
+    await start_nops(dut)
+    await Timer(9, "us")
+    await stop_nops()
+
+    # Read time
+    await send_instr(dut, InstructionLW(x1, x0, -0x100).encode())
+    assert start_time+6 <= await read_reg(dut, x1) <= start_time+8
+
+@cocotb.test()
 async def test_csr(dut):
     dut._log.info("Start")
     

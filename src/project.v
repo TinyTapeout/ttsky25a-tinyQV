@@ -21,6 +21,7 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
     localparam PERI_GPIO_OUT_SEL = 4'h3;
     localparam PERI_DEBUG_UART = 4'h6;
     localparam PERI_DEBUG_UART_STATUS = 4'h7;
+    localparam PERI_TIME_LIMIT = 4'hB;
     localparam PERI_DEBUG = 4'hC;
     localparam PERI_USER = 4'hF;
 
@@ -85,6 +86,7 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
     wire debug_uart_tx_start = write_n != 2'b11 && connect_peripheral == PERI_DEBUG_UART;
 
     // Time
+    reg [6:2] time_limit;
     wire time_pulse;
 
     // Peripherals interface
@@ -193,6 +195,7 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
         case (connect_peripheral)
             PERI_GPIO_OUT_SEL:data_from_read = {24'h0, gpio_out_sel, 6'h0};
             PERI_DEBUG_UART_STATUS: data_from_read = {31'h0, debug_uart_tx_busy};
+            PERI_TIME_LIMIT:  data_from_read = {25'h0, time_limit, 2'b11};
             PERI_USER:        data_from_read = peri_data_out;
             default:          data_from_read = 32'hFFFF_FFFF;
         endcase
@@ -204,9 +207,11 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
     always @(posedge clk) begin
         if (!rst_reg_n) begin
             gpio_out_sel <= {!ui_in[0], 1'b0};
+            time_limit <= (CLOCK_MHZ / 4 - 1);
         end
         if (write_n != 2'b11) begin
             if (connect_peripheral == PERI_GPIO_OUT_SEL) gpio_out_sel <= data_to_write[7:6];
+            if (connect_peripheral == PERI_TIME_LIMIT) time_limit <= data_to_write[6:2];
         end
     end
 
@@ -219,29 +224,17 @@ module tt_um_tt_tinyQV #(parameter CLOCK_MHZ=64) (
         .uart_tx_busy(debug_uart_tx_busy) 
     );
 
-    reg [5:0] time_count;
+    reg [6:0] time_count;
 
-    generate
-        if (CLOCK_MHZ == 64) begin
-            always @(posedge clk) begin
-                if (!rst_reg_n) begin
-                    time_count <= 0;
-                end else begin
-                    time_count <= time_count + 1;
-                end
-            end
+    always @(posedge clk) begin
+        if (!rst_reg_n) begin
+            time_count <= 0;
         end else begin
-            always @(posedge clk) begin
-                if (!rst_reg_n) begin
-                    time_count <= 0;
-                end else begin
-                    if (time_count == (CLOCK_MHZ - 1)) time_count <= 0;
-                    else time_count <= time_count + 1;
-                end
-            end
+            if (time_pulse) time_count <= 0;
+            else time_count <= time_count + 1;
         end
-    endgenerate
-    assign time_pulse = time_count == (CLOCK_MHZ - 1);
+    end
+    assign time_pulse = time_count == {time_limit, 2'b11};
 
     // Debug
     always @(posedge clk) begin
