@@ -29,7 +29,7 @@ module tqvp_TRNG_20RO7FF_PC #(
     reg [N_RO:0][SIZE_RO:0] oscillator_ring = 0;
     reg [N_RO:0] oscillator_ring_Q = 0;
     
-    reg [7:0] ro_data = 0;
+    //reg [7:0] ro_data = 0;
     reg [7:0] shift_reg = 0;
     reg xorA;
     reg counter = 4'b0;
@@ -63,7 +63,7 @@ module tqvp_TRNG_20RO7FF_PC #(
     always_ff @(posedge clk or posedge !rst_n) begin //shift register / 8bit data packager
         if (!rst_n) begin
             counter <= 4'b0;
-            ro_data <= 8'b0;
+            //ro_data <= 8'b0;
             shift_reg <= 8'b0;
             tx_start <= 1'b0;
         end
@@ -80,10 +80,11 @@ module tqvp_TRNG_20RO7FF_PC #(
 
                 // Counting logic
                 if (counter >= 7) begin
-                    ro_data <= shift_reg;
+                    //ro_data <= shift_reg;
+                    data_out <= shift_reg;
                     tx_start <= 1'b1;
                     shift_reg <= 8'b0;
-                    data_out <= ro_data;
+                    //data_out <= ro_data;
                 end
                 else begin
                     tx_start <= 1'b0;
