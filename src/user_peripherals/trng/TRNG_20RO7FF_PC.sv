@@ -36,7 +36,7 @@ module tqvp_TRNG_20RO7FF_PC #(
     integer i;
     integer j;
 
-    always_comb @(*) begin //Ring oscilators Construction logic
+    always @(*) begin //Ring oscilators Construction logic
 
         for (j = 0; j < N_RO; j = j + 1) begin
             for (i = 1; i <= SIZE_RO; i = i + 1) begin
@@ -52,7 +52,7 @@ module tqvp_TRNG_20RO7FF_PC #(
         end
     end
 
-    always_comb @(*) begin // xor logic
+    always @(*) begin // xor logic
         xorA = oscillator_ring_Q[0] ^ oscillator_ring_Q[1];
         for (i = 2; i < N_RO; i = i + 1) begin
             xorA = xorA ^ oscillator_ring_Q[i];
