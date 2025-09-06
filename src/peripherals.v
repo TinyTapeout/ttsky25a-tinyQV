@@ -712,7 +712,7 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .data_out(data_from_simple_peri[15])
     );
 
-    tqvp_RNG_20RO7FF_PC TRNG_036 (
+    tqvp_TRNG_20RO7FF_PC TRNG_036 (
     .clk(clk),
     .rst_n(rst_n),
 
