@@ -32,7 +32,7 @@ USER_PERIPHERAL_32 = fpu.test
 USER_PERIPHERAL_33 = pwl_synth.test
 USER_PERIPHERAL_34 = tqvp_laurie_dwarf_line_table_accelerator.test
 USER_PERIPHERAL_35 = prng.test
-USER_PERIPHERAL_36 = 
+USER_PERIPHERAL_36 = trng.test
 USER_PERIPHERAL_37 = intercal_alu.test
 USER_PERIPHERAL_38 = CORDIC.test_trigonometric_simple \
 					 CORDIC.test_linear_simple \

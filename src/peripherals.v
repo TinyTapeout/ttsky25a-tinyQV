@@ -712,6 +712,21 @@ module tinyQV_peripherals #(parameter CLOCK_MHZ=64) (
         .data_out(data_from_simple_peri[15])
     );
 
+    tqvp_RNG_20RO7FF_PC TRNG_036 (
+    .clk(clk),
+    .rst_n(rst_n),
+
+    .ui_in(ui_in),
+    .uo_out(uo_out_from_simple_peri[36]),
+
+    .address(addr_in[3:0]),
+
+    .data_write((data_write_n != 2'b11) & peri_simple[36]),
+    .data_in(data_in[7:0]),
+
+    .data_out(data_from_simple_peri[36])
+    );
+
     // --------------------------------------------------------------------- //
     // Additional full interface peripherals with no interrupt
 
