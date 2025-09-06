@@ -28,11 +28,12 @@ module tqvp_TRNG_20RO7FF_PC #(
 
     reg [N_RO:0][SIZE_RO:0] oscillator_ring = 0;
     reg [N_RO:0] oscillator_ring_Q = 0;
-
+    
     reg [7:0] ro_data = 0;
     reg [7:0] shift_reg = 0;
     reg xorA;
     reg counter = 4'b0;
+    reg tx_start = 1'b0;
     integer i;
     integer j;
 
