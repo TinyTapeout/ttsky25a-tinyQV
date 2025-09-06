@@ -26,7 +26,7 @@ module tqvp_TRNG_20RO7FF_PC #(
     output [7:0]  data_out      // Data out from the peripheral, set this in accordance with the supplied address
 );
 
-    reg [SIZE_RO:0] oscillator_ring [N_RO] = 0;
+    reg [N_RO:0][SIZE_RO:0] oscillator_ring = 0;
     reg [N_RO:0] oscillator_ring_Q = 0;
 
     reg [7:0] ro_data = 0;
@@ -40,22 +40,22 @@ module tqvp_TRNG_20RO7FF_PC #(
 
         for (j = 0; j < N_RO; j = j + 1) begin
             for (i = 1; i <= SIZE_RO; i = i + 1) begin
-                [i]oscillator_ring[j] = ~[i-1]oscillator_ring[j];
+                oscillator_ring[j][i] = ~oscillator_ring[j][i-1];
             end
-            [0]oscillator_ring[j] = ~[SIZE_RO]oscillator_ring[j];
+            oscillator_ring[j][0] = ~oscillator_ring[j][SIZE_RO];
         end
     end
 
     always_ff @(posedge clk) begin //sampling FF logic
         for (i = 0; i < N_RO; i = i + 1) begin
-            oscillator_ring_Q[i] = [SIZE_RO]oscillator_ring[i]
+            oscillator_ring_Q[i] = oscillator_ring[i][SIZE_RO];
         end
     end
 
     always_comb @(*) begin // xor logic
-        xorA = oscillator_ring_Q[0] ^ oscillator_ring_Q[1]
+        xorA = oscillator_ring_Q[0] ^ oscillator_ring_Q[1];
         for (i = 2; i < N_RO; i = i + 1) begin
-            xorA = xorA ^ oscillator_ring_Q[i]
+            xorA = xorA ^ oscillator_ring_Q[i];
         end
     end
 
