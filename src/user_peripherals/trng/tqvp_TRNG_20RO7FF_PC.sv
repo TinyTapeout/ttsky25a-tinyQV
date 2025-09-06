@@ -90,6 +90,6 @@ module tqvp_TRNG_20RO7FF_PC #(
             end
         end
     end
-    data_out <= ro_data;
+    assign data_out = ro_data;
 
 endmodule
