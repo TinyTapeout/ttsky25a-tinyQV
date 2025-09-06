@@ -6,8 +6,8 @@
 `default_nettype none
 
 module tqvp_TRNG_20RO7FF_PC #(
-    parameter SIZE_RO = 6; //size of the RO will be SIZE_RO + 1 inverter gates (7 in this case)
-    parameter N_RO = 20; //number of ROs in parallel
+    parameter SIZE_RO = 6, //size of the RO will be SIZE_RO + 1 inverter gates (7 in this case)
+              N_RO = 20 //number of ROs in parallel
   )(
     input         clk,          // Clock - the TinyQV project clock is normally set to 64MHz.
     input         rst_n,        // Reset_n - low to reset.
@@ -36,7 +36,7 @@ module tqvp_TRNG_20RO7FF_PC #(
     integer i;
     integer j;
 
-    always @(*) begin //Ring oscilators Construction logic
+    always_comb @(*) begin //Ring oscilators Construction logic
 
         for (j = 0; j < N_RO; j = j + 1) begin
             for (i = 1; i <= SIZE_RO; i = i + 1) begin
@@ -46,20 +46,20 @@ module tqvp_TRNG_20RO7FF_PC #(
         end
     end
 
-    always @(posedge clk) begin //sampling FF logic
+    always_ff @(posedge clk) begin //sampling FF logic
         for (i = 0; i < N_RO; i = i + 1) begin
             oscillator_ring_Q[i] = [SIZE_RO]oscillator_ring[i]
         end
     end
 
-    always @(*) begin // xor logic
+    always_comb @(*) begin // xor logic
         xorA = oscillator_ring_Q[0] ^ oscillator_ring_Q[1]
         for (i = 2; i < N_RO; i = i + 1) begin
             xorA = xorA ^ oscillator_ring_Q[i]
         end
     end
 
-    always @(posedge clk or posedge !rst_n) begin //shift register / 8bit data packager
+    always_ff @(posedge clk or posedge !rst_n) begin //shift register / 8bit data packager
         if (!rst_n) begin
             counter <= 4'b0;
             ro_data <= 8'b0;
