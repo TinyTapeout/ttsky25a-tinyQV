@@ -8,7 +8,7 @@ You can also include images in this folder and reference them in the markdown. E
 
 # WS2812B impostor
 
-Author: Javier MS
+Author: [Javier Munoz Saez](https://github.com/javiBajoCero).
 
 Peripheral index: 19
 
@@ -60,8 +60,8 @@ The default preescaler values after reset are 3840 and 38, configured to work wi
 ## How to Test
 
 1. (Optional) Adjust timing parameters if needed: (prescalers are for 62.5 MHz clock by default after reset)
-   - Write a new 32-bit `idle_ticks` value to addresses `0x04–0x07`
-   - Write a new 32-bit `threshold_cycles` value to addresses `0x0C–0x0F`
+   - Write a new 16-bit `shadow_idle_ticks` value to addresses `0x06–0x07`
+   - Write a new 16-bit `shadow_threshold_cycles` value to addresses `0x0A–0x0B`
    - Write any value to `prescaler_commit` (e.g. `0xFF`) to address `0x05` to **commit** the new values
 
 2.  (Optional) Select DIN input:(DIN is `ui_in[1]` by default after reset)
